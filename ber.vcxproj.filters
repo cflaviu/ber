@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="tst\test.cpp" />
+    <ClCompile Include="src\asn1\ber\printer.cpp" />
+    <ClCompile Include="src\asn1\ber\types.cpp" />
+    <ClCompile Include="src\asn1\ber\pch.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="asn1\ber\decoder.h" />
+    <ClInclude Include="inc\asn1\ber\basic_decoder.h" />
+    <ClInclude Include="inc\asn1\ber\decoder.h" />
+    <ClInclude Include="inc\asn1\ber\printer.h" />
+    <ClInclude Include="inc\asn1\ber\types.h" />
+    <ClInclude Include="inc\asn1\ber\field_decoder\base.h" />
+    <ClInclude Include="inc\asn1\ber\field_decoder\length.h" />
+    <ClInclude Include="inc\asn1\ber\field_decoder\simple.h" />
+    <ClInclude Include="inc\asn1\ber\field_decoder\tag.h" />
+    <ClInclude Include="inc\asn1\ber\field_decoder\value.h" />
+    <ClInclude Include="inc\asn1\ber\pch.h" />
+  </ItemGroup>
+</Project>
