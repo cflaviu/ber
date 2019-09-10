@@ -32,9 +32,10 @@ void printer::on_data(const uint32_t tag, const bool constructed, const byte* da
 	}
 }
 
-void printer::on_error(const byte decoder_id, const byte error)
+void printer::on_error(const byte decoder_id, const byte error, const byte* buffer, const size_t buffer_size)
 {
-	std::cout << "decoder " << int(decoder_id) << ": error " << int(error) << '\n';
+	std::cout << "decoder " << int(decoder_id) << ": error " << int(error) << "\n   buffer: ";
+	print_buffer(buffer, buffer_size);
 }
 
 void printer::operator () (const byte* buffer, size_t buffer_size)

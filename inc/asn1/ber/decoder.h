@@ -11,11 +11,13 @@ namespace asn1
 {
 	namespace ber
 	{
+		typedef uint32_t size_t;
+
 		/*
 		struct observer_example
 		{
 			void on_data(const uint32_t tag, const bool constructed, const byte* data, const uint32_t size);
-			void on_error(const decoder_id item);
+			void on_error(const decoder_id item, const byte* buffer, const uint32_t buffer_size);
 		};
 		*/
 
@@ -138,7 +140,7 @@ namespace asn1
 								can_continue = false;
 								if (observer_ != nullptr)
 								{
-									observer_->on_error(meta_id, static_cast<byte>(error));
+									observer_->on_error(meta_id, static_cast<byte>(error), buffer, buffer_size);
 								}
 							}
 						}
@@ -150,7 +152,7 @@ namespace asn1
 						can_continue = false;
 						if (observer_ != nullptr)
 						{
-							observer_->on_error(decoder_.current_decoder(), static_cast<byte>(internal_data_.error()));
+							observer_->on_error(decoder_.current_decoder(), static_cast<byte>(internal_data_.error()), buffer, buffer_size);
 						}
 
 						break;
