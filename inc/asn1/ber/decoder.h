@@ -58,7 +58,7 @@ namespace asn1
 					return (error_ptr_ == nullptr) ? decoder_.error() : *error_ptr_;
 				}
 
-				bool good() const { return field_decoder::is_good(state()); }	
+				bool good() const { return field_decoder::is_good(state()); }
 
 				void set_error(const error_t item)
 				{
@@ -86,8 +86,6 @@ namespace asn1
 			_Decoder decoder_;
 			internal_data internal_data_;
 			_Observer* observer_;
-
-
 
 		public:
 			decoder(_Observer* const observer = nullptr) :
@@ -166,8 +164,8 @@ namespace asn1
 				return can_continue;
 			}
 
-			void reset() 
-			{ 
+			void reset()
+			{
 				decoder_.reset();
 				internal_data_.reset();
 			}

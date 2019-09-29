@@ -35,6 +35,11 @@ namespace asn1
 			field_decoder::base* const decoders_[3] = { &tag_reader_, &length_reader_, &value_reader_ };
 			decoder_id decoder_id_;
 
+			inline field_decoder::base* decoder() const
+			{
+				return decoders_[decoder_id_];
+			}
+
 		public:
 			typedef field_decoder::state_t state_t;
 			typedef field_decoder::error_t error_t;
@@ -59,16 +64,16 @@ namespace asn1
 				decoder_id_ = tag_id;
 			}
 
-			state_t state() const { return decoders_[decoder_id_]->state(); }
-			error_t error() const { return decoders_[decoder_id_]->error(); }
-			
+			state_t state() const { return decoder()->state(); }
+			error_t error() const { return decoder()->error(); }
+
 			bool good() const { return is_good(state()); }
 
 			const byte* operator () (const byte* buffer, const byte* const buffer_end)
 			{
 				while (buffer < buffer_end)
 				{
-					auto reader = decoders_[decoder_id_];
+					auto reader = decoder();
 					buffer = (*reader)(buffer, buffer_end);
 					switch (reader->state())
 					{

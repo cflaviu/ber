@@ -23,7 +23,7 @@ int main()
 	ber::printer printer;
 	for( auto& i : input)
 	{
-		printer(i.data(), i.size());
+		printer(i.data(), asn1::ber::size_t(i.size()));
 		printer.reset();
 	}
 }
