@@ -2,7 +2,7 @@
 
 namespace asn1
 {
-	typedef unsigned char byte;
+	using byte = unsigned char;
 
 	namespace ber
 	{

@@ -2,13 +2,13 @@
 #ifndef  PCH
 	#include <string>
 #endif
-#include <asn1/ber/printer.h>
+#include <asn1/ber/decoder/printer.h>
 
 int main()
 {
 	using namespace asn1;
 
-	typedef std::vector<byte> Buffer;
+	using Buffer = std::vector<byte>;
 
 	const std::vector<Buffer> input =
 	{
@@ -20,7 +20,7 @@ int main()
 		{ 0x01, 0x05, 0x0e, 0x83, 0xbb, 0xce, 0x2d, 0xf9, 0x3c, 0xa0, 0xe9, 0xa3, 0x2f, 0x2c, 0xaf, 0xc0 }
 	};
 
-	ber::printer printer;
+	ber::decoder::printer printer;
 	for( auto& i : input)
 	{
 		printer(i.data(), asn1::ber::size_t(i.size()));

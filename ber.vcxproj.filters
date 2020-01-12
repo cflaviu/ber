@@ -1,22 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="tst\test.cpp" />
     <ClCompile Include="src\asn1\ber\printer.cpp" />
     <ClCompile Include="src\asn1\ber\types.cpp" />
     <ClCompile Include="src\asn1\ber\pch.cpp" />
+    <ClCompile Include="tst\decoder_test.cpp" />
+    <ClCompile Include="tst\encoder_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="asn1\ber\decoder.h" />
-    <ClInclude Include="inc\asn1\ber\basic_decoder.h" />
-    <ClInclude Include="inc\asn1\ber\decoder.h" />
-    <ClInclude Include="inc\asn1\ber\printer.h" />
     <ClInclude Include="inc\asn1\ber\types.h" />
-    <ClInclude Include="inc\asn1\ber\field_decoder\base.h" />
-    <ClInclude Include="inc\asn1\ber\field_decoder\length.h" />
-    <ClInclude Include="inc\asn1\ber\field_decoder\simple.h" />
-    <ClInclude Include="inc\asn1\ber\field_decoder\tag.h" />
-    <ClInclude Include="inc\asn1\ber\field_decoder\value.h" />
     <ClInclude Include="inc\asn1\ber\pch.h" />
+    <ClInclude Include="inc\asn1\ber\encoder\base.h" />
+    <ClInclude Include="inc\asn1\ber\encoder\sequence.h" />
+    <ClInclude Include="inc\asn1\ber\encoder\value.h" />
+    <ClInclude Include="inc\asn1\ber\decoder\printer.h" />
+    <ClInclude Include="inc\asn1\ber\encoder\field\base.h" />
+    <ClInclude Include="inc\asn1\ber\encoder\field\length.h" />
+    <ClInclude Include="inc\asn1\ber\encoder\field\simple.h" />
+    <ClInclude Include="inc\asn1\ber\encoder\field\tag.h" />
+    <ClInclude Include="inc\asn1\ber\encoder\field\value.h" />
+    <ClInclude Include="inc\asn1\ber\decoder\field\base.h" />
+    <ClInclude Include="inc\asn1\ber\decoder\field\length.h" />
+    <ClInclude Include="inc\asn1\ber\decoder\field\simple.h" />
+    <ClInclude Include="inc\asn1\ber\decoder\field\tag.h" />
+    <ClInclude Include="inc\asn1\ber\decoder\field\value.h" />
+    <ClInclude Include="inc\asn1\ber\decoder\basic.h" />
+    <ClInclude Include="inc\asn1\ber\decoder\engine.h" />
   </ItemGroup>
 </Project>

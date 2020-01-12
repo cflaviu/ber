@@ -1,8 +1,9 @@
 #include "asn1/ber/pch.h"
-#include "asn1/ber/printer.h"
+#include "asn1/ber/decoder/printer.h"
 
 namespace asn1 {
 namespace ber {
+namespace decoder {
 
 printer::printer():
 	decoder_(this)
@@ -43,8 +44,8 @@ void printer::operator () (const byte* buffer, size_t buffer_size)
 	do
 	{
 		decoder_(buffer, buffer_size);
-	} 
+	}
 	while (decoder_.good() && buffer_size != 0);
 }
 
-}}
+}}}
