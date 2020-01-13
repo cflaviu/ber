@@ -1,6 +1,6 @@
 #pragma once
 #ifndef PCH
-#include <asn1/ber/encoder/base.h>
+	#include <asn1/ber/encoder/base.h>
 #endif
 
 namespace asn1
@@ -17,14 +17,16 @@ namespace asn1
 				using error = base_t::error;
 
 				value():
-					buffer_(nullptr),
-					buffer_size_(0)
+					buffer_(nullptr)
+				{}
+
+				value(const _Tag tag) :
+					base_t(tag)
 				{}
 
 				value(const _Tag tag, const byte* value, const _Length value_size):
-					base_t(tag),
-					buffer_(value),
-					buffer_size_(value_size)
+					base_t(tag, value_size),
+					buffer_(value)
 				{}
 
 				const byte* buffer() const
@@ -32,28 +34,24 @@ namespace asn1
 					return buffer_;
 				}
 
-				_Length buffer_size() const
+				void set_buffer(const byte* value)
 				{
-					return buffer_size_;
+					buffer_ = value;
 				}
 
 				void set_buffer(const byte* value, _Length value_size)
 				{
-
+					buffer_ = value;
+					base_t::length_ = value_size;
 				}
 
-				virtual error encode_to(byte* buffer, _Length buffer_size) const
+				virtual std::pair<error, _Length> encode_to(byte* buffer, _Length buffer_size) const
 				{
-					//tag_encoder tag_encoder;
-					//length_encoder length_encoder;
-					//value_encoder value_encoder;
-
-					return error::none;
+					return std::make_pair(error::none, 10);
 				}
 
 			protected:
 				const byte* buffer_;
-				_Length buffer_size_;
 			};
 		}
 	}

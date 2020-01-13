@@ -2,34 +2,29 @@
 #ifndef  PCH
 	#include <string>
 #endif
-#include <asn1/ber/encoder/sequence.h>
+#include <asn1/ber/encoder/structure.h>
 #include <asn1/ber/encoder/value.h>
 
 int main()
 {
 	using namespace asn1::ber::encoder;
-	uint32_t seq_tag = 2;
 	uint32_t value1_tag = 3;
 	uint32_t value2_tag = 4;
 	uint32_t value3_tag = 5;
 
-	asn1::byte* value_buffer1 = nullptr;
-	asn1::byte* value_buffer2 = nullptr;
-	asn1::byte* value_buffer3 = nullptr;
-	asn1::byte* output_buffer = nullptr;
-	uint32_t value_buffer1_size = 10;
-	uint32_t value_buffer2_size = 20;
-	uint32_t value_buffer3_size = 30;
-	uint32_t output_buffer_size = 100;
+	std::array<asn1::byte, 4> value_buffer1 { 0x0A, 0x0B, 0x0C, 0x0D };
+	std::array<asn1::byte, 6> value_buffer2 { 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
+	std::array<asn1::byte, 8> value_buffer3 { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 };
+	std::array<asn1::byte, 24> output_buffer {};
 
-	value<> value1(value1_tag, value_buffer2, value_buffer1_size);
-	value<> value2(value2_tag, value_buffer2, value_buffer1_size);
-	sequence<> seq;
+	value<> value1(value1_tag, value_buffer1.data(), static_cast<uint32_t>(value_buffer1.size()));
+	value<> value2(value2_tag, value_buffer2.data(), static_cast<uint32_t>(value_buffer2.size()));
+	structure<> seq(asn1::ber::sequence);
 	seq << value1 << value2;
 
-	value<> value3(value3_tag, value_buffer3, value_buffer3_size);
-	sequence<> main_seq;
+	value<> value3(value3_tag, value_buffer3.data(), static_cast<uint32_t>(value_buffer3.size()));
+	structure<> main_seq(asn1::ber::sequence);
 	main_seq << value3 << seq;
 
-	main_seq.encode_to(output_buffer, output_buffer_size);
+	main_seq.encode_to(output_buffer.data(), static_cast<uint32_t>(output_buffer.size()));
 }

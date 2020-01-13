@@ -3,7 +3,6 @@
 	#include <asn1/ber/types.h>
 	#include <asn1/ber/encoder/field/tag.h>
 	#include <asn1/ber/encoder/field/length.h>
-	#include <asn1/ber/encoder/field/value.h>
 #endif
 
 namespace asn1
@@ -34,20 +33,34 @@ namespace asn1
 					tag_ = item;
 				}
 
-				virtual error encode_to(byte* buffer, _Length buffer_size) const = 0;
+				_Length length() const
+				{
+					return length_;
+				}
+
+				void set_length(const _Length item)
+				{
+					length_ = item;
+				}
+
+				virtual std::pair<error, _Length> encode_to(byte* buffer, _Length buffer_size) const = 0;
 
 			protected:
 				using tag_encoder = field::tag<tag_type>;
 				using length_encoder = field::length<length_type>;
-				using value_encoder = field::value;
 
 				template <typename _Tag, typename _Length>
-				friend class sequence;
+				friend class structure;
 
-				base(const tag_type tag = 0) : next_(nullptr), tag_(tag) {}
+				base(const tag_type tag = 0, const length_type length = 0) :
+					tag_(tag),
+					length_(length),
+					next_(nullptr)
+				{}
 
+				tag_encoder tag_;
+				length_encoder length_;
 				const base* next_;
-				tag_type tag_;
 			};
 		}
 	}

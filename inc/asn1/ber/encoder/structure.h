@@ -10,7 +10,7 @@ namespace asn1
 		namespace encoder
 		{
 			template <typename _Tag = uint32_t, typename _Length = uint32_t>
-			class sequence: public base<_Tag, _Length>
+			class structure : public base<_Tag, _Length>
 			{
 			public:
 				typedef base<_Tag, _Length> base_t;
@@ -18,13 +18,13 @@ namespace asn1
 				using tag_type = base_t::tag_type;
 				using length_type = base_t::length_type;
 
-				sequence(const _Tag tag = 0x22):
+				structure(const _Tag tag) :
 					base_t(tag),
 					begin_(nullptr),
 					end_(nullptr)
 				{}
 
-				sequence& operator << (base_t& item)
+				structure& operator << (base_t& item)
 				{
 					if (begin_ == nullptr)
 					{
@@ -40,19 +40,15 @@ namespace asn1
 					return *this;
 				}
 
-				virtual error encode_to(byte* buffer, _Length buffer_size) const
+				virtual std::pair<error, _Length> encode_to(byte* buffer, _Length buffer_size) const
 				{
-					//tag_encoder tag_encoder;
-					//length_encoder length_encoder;
-					//value_encoder value_encoder;
-
 					int count = 1;
 					for (auto i = begin_; i != nullptr; i = i->next_)
 					{
 						std::cout << count++ << '\n';
 					}
 
-					return error::none;
+					return std::make_pair(error::none, 10);
 				}
 
 			protected:

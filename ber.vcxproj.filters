@@ -12,14 +12,11 @@
     <ClInclude Include="inc\asn1\ber\types.h" />
     <ClInclude Include="inc\asn1\ber\pch.h" />
     <ClInclude Include="inc\asn1\ber\encoder\base.h" />
-    <ClInclude Include="inc\asn1\ber\encoder\sequence.h" />
     <ClInclude Include="inc\asn1\ber\encoder\value.h" />
     <ClInclude Include="inc\asn1\ber\decoder\printer.h" />
     <ClInclude Include="inc\asn1\ber\encoder\field\base.h" />
     <ClInclude Include="inc\asn1\ber\encoder\field\length.h" />
-    <ClInclude Include="inc\asn1\ber\encoder\field\simple.h" />
     <ClInclude Include="inc\asn1\ber\encoder\field\tag.h" />
-    <ClInclude Include="inc\asn1\ber\encoder\field\value.h" />
     <ClInclude Include="inc\asn1\ber\decoder\field\base.h" />
     <ClInclude Include="inc\asn1\ber\decoder\field\length.h" />
     <ClInclude Include="inc\asn1\ber\decoder\field\simple.h" />
@@ -27,5 +24,6 @@
     <ClInclude Include="inc\asn1\ber\decoder\field\value.h" />
     <ClInclude Include="inc\asn1\ber\decoder\basic.h" />
     <ClInclude Include="inc\asn1\ber\decoder\engine.h" />
+    <ClInclude Include="inc\asn1\ber\encoder\structure.h" />
   </ItemGroup>
 </Project>
