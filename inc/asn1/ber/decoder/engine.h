@@ -119,7 +119,7 @@ namespace asn1
 			template <typename _Observer, const size_t _BufferSize, typename _Length>
 			std::pair<bool, const byte*> engine<_Observer, _BufferSize, _Length>::read(const byte* buffer, const byte* const buffer_end)
 			{
-				std::pair<bool, const byte*> result = std::make_pair(true, nullptr); 
+				std::pair<bool, const byte*> result = std::make_pair(true, buffer_end); 
 				auto next = decoder_(buffer, buffer_end);
 				if (decoder_.state() == state_t::done)
 				{

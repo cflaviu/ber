@@ -31,7 +31,7 @@ namespace asn1
 
 					const byte* read(const byte* ptr, const byte* const end)
 					{
-						const auto min_size = std::min(remaining_, static_cast<length_type>(end - ptr));
+						const auto min_size = std::min(remaining_, static_cast<length_type>(std::distance(ptr, end)));
 						std::memcpy(buffer_, ptr, min_size);
 						ptr += min_size;
 						remaining_ -= min_size;
