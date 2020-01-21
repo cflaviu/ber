@@ -19,7 +19,7 @@ namespace asn1
 
 				protected:
 					byte* buffer_;
-					length_type buffer_size_;
+					byte* buffer_end_;
 					length_type length_;
 					length_type remaining_;
 
@@ -44,20 +44,21 @@ namespace asn1
 					}
 
 				public:
-					value(byte* const buffer = nullptr, const length_type buffer_size = 0, const length_type length = 0) :
+					value(byte* const buffer = nullptr, byte* const buffer_end = nullptr, const length_type length = 0) :
 						buffer_(buffer),
-						buffer_size_(buffer_size),
+						buffer_end_(buffer_end),
 						length_(length),
 						remaining_(length)
 					{}
 
 					length_type length() const { return length_; }
 					const byte* buffer() const { return buffer_; }
-					length_type buffer_size() const { return buffer_size_; }
+					const byte* buffer_end() const { return buffer_end_; }
+					length_type buffer_size() const { return static_cast<length_type>(std::distance(buffer_, buffer_end_)); }
 
 					bool reset(const length_type length)
 					{
-						const bool good = (buffer_size_ >= length);
+						const bool good = (buffer_size() >= length);
 						if (good)
 						{
 							state_ = state_t::stopped;
@@ -72,10 +73,10 @@ namespace asn1
 						return good;
 					}
 
-					bool reset(byte* const buffer, const length_type buffer_size, const length_type length)
+					bool reset(byte* const buffer, const byte* const buffer_end, const length_type length)
 					{
 						buffer_ = buffer;
-						buffer_size_ = buffer_size;
+						buffer_end_ = buffer_end;
 						return reset(length);
 					}
 				};

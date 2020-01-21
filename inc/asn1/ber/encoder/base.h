@@ -11,46 +11,64 @@ namespace asn1
 	{
 		namespace encoder
 		{
-			template <typename _Tag = uint32_t, typename _Length = uint32_t>
+			enum class error_t: byte
+			{
+				none,
+				not_enough_space,
+			};
+
+			template <typename _Length>
 			class base
 			{
 			public:
-				using tag_type = _Tag;
+				using tag_type = byte;
 				using length_type = _Length;
 
-				enum class error
+				tag_type tag() const
 				{
-					none,
-				};
-
-				_Tag tag() const
-				{
-					return tag_;
+					return tag_.value();
 				}
 
-				void set_tag(const _Tag item)
+				void set_tag(const tag_type item)
 				{
 					tag_ = item;
 				}
 
-				_Length length() const
+				virtual length_type content_length() const = 0;
+
+				length_type total_length() const
 				{
-					return length_;
+					auto result = content_length();
+					result += tag_.bytes() + length_.bytes();
+					return result;
 				}
 
-				void set_length(const _Length item)
+				std::pair<error_t, _Length> encode_to(byte* buffer, byte* const buffer_end) const
 				{
-					length_ = item;
-				}
+					std::pair<error_t, _Length> result;
+					if (total_length() <= std::distance(buffer, buffer_end))
+					{
+						buffer = tag_.serialize_to(buffer);
+						buffer = length_.serialize_to(buffer);
+						result = internal_encode(buffer, buffer_end);  
+						result.second += tag_.bytes() + length_.bytes();
+					}
+					else
+					{
+						result = std::make_pair(error_t::not_enough_space, 0);
+					}
 
-				virtual std::pair<error, _Length> encode_to(byte* buffer, _Length buffer_size) const = 0;
+					return result;
+				}
 
 			protected:
-				using tag_encoder = field::tag<tag_type>;
+				using tag_encoder = field::tag;
 				using length_encoder = field::length<length_type>;
 
-				template <typename _Tag, typename _Length>
+				template <typename _Length>
 				friend class structure;
+
+				virtual std::pair<error_t, _Length> internal_encode(byte* buffer, byte* const buffer_end) const = 0;
 
 				base(const tag_type tag = 0, const length_type length = 0) :
 					tag_(tag),
@@ -59,7 +77,7 @@ namespace asn1
 				{}
 
 				tag_encoder tag_;
-				length_encoder length_;
+				mutable length_encoder length_;
 				const base* next_;
 			};
 		}

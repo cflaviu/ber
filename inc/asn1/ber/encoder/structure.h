@@ -9,20 +9,47 @@ namespace asn1
 	{
 		namespace encoder
 		{
-			template <typename _Tag = uint32_t, typename _Length = uint32_t>
-			class structure : public base<_Tag, _Length>
+			template <typename _Length = uint16_t>
+			class structure : public base<_Length>
 			{
 			public:
-				typedef base<_Tag, _Length> base_t;
-				using error = base_t::error;
+				using base_t = base<_Length>;
 				using tag_type = base_t::tag_type;
 				using length_type = base_t::length_type;
 
-				structure(const _Tag tag) :
-					base_t(tag),
+				enum constants : byte
+				{
+					constructed_bit = 0x20,
+				};
+
+				structure(const tag_type tag) :
+					base_t(tag | constructed_bit),
 					begin_(nullptr),
-					end_(nullptr)
+					end_(nullptr),
+					dirty_length_(true)
 				{}
+
+				void set_tag(const tag_type item)
+				{
+					base_t::tag_ = item | constructed_bit;
+				}
+
+				virtual length_type content_length() const
+				{
+					if (dirty_length_)
+					{
+						dirty_length_ = false;
+						length_type len = 0;
+						for (auto i = begin_; i != nullptr; i = i->next_)
+						{
+							len += i->total_length();
+						}
+
+						base_t::length_ = base_t::length_encoder(len);
+					}
+
+					return base_t::length_.value();
+				}
 
 				structure& operator << (base_t& item)
 				{
@@ -37,23 +64,35 @@ namespace asn1
 					}
 
 					end_ = &item;
+					if (!dirty_length_)
+					{
+						dirty_length_ = true;
+					}
+
 					return *this;
 				}
 
-				virtual std::pair<error, _Length> encode_to(byte* buffer, _Length buffer_size) const
+			protected:
+				virtual std::pair<error_t, length_type> internal_encode(byte* buffer, byte* const buffer_end) const
 				{
-					int count = 1;
-					for (auto i = begin_; i != nullptr; i = i->next_)
+					byte* buf = buffer;
+					error_t encoding_error;
+					length_type used;
+					for (auto i = begin_; i != nullptr; i = i->next_, buf += used)
 					{
-						std::cout << count++ << '\n';
+						std::tie(encoding_error, used) = i->encode_to(buf, buffer_end);
+						if (encoding_error != error_t::none)
+						{
+							break;
+						}
 					}
 
-					return std::make_pair(error::none, 10);
+					return std::make_pair(encoding_error, static_cast<length_type>(buf - buffer));
 				}
 
-			protected:
 				const base_t* begin_;
 				base_t* end_;
+				mutable bool dirty_length_;
 			};
 		}
 	}

@@ -22,15 +22,14 @@ namespace asn1
 					int8_t length_;
 
 				public:
-					simple() :
+					simple(const int8_t length = 0) :
 						value_(0),
-						length_(0)
+						length_(length)
 					{}
 
 					value_type value() const { return value_; }
 
-					int8_t length() const { return length_; }
-					int8_t length2() const { return length_; }
+					int8_t bytes() const { return length_; }
 
 					void reset()
 					{

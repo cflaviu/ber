@@ -23,14 +23,15 @@ namespace asn1
 			};
 			*/
 
-			template <typename _Observer, const size_t _BufferSize, typename _Tag = uint32_t, typename _Length = uint32_t>
+			template <typename _Observer, const size_t _BufferSize, typename _Length = uint16_t>
 			class engine
 			{
 			public:
+				using tag_type = byte;
+				using length_type = _Length;
 				using _Buffer = std::array<byte, _BufferSize>;
-				using _Engine = basic<_Tag, _Length>;
+				using _Engine = basic<_Length>;
 				using state_t = typename _Engine::state_t;
-				using error_t = field::error_t;
 
 			protected:
 				class internal_data
@@ -84,7 +85,7 @@ namespace asn1
 					}
 				};
 
-				bool read(const byte*& buffer, size_t& buffer_size);
+				std::pair<bool, const byte*> read(const byte* buffer, const byte* const buffer_end);
 
 				_Buffer buffer_;
 				_Engine decoder_;
@@ -93,7 +94,7 @@ namespace asn1
 
 			public:
 				engine(_Observer* const observer = nullptr) :
-					decoder_(buffer_.data(), static_cast<uint32_t>(buffer_.size())),
+					decoder_(buffer_.data(), buffer_.data() + buffer_.size()),
 					observer_(observer),
 					internal_data_(decoder_)
 				{}
@@ -106,7 +107,7 @@ namespace asn1
 
 				void set_observer(_Observer* const item) { observer_ = item; }
 
-				bool operator () (const byte*& buffer, size_t& buffer_size);
+				std::pair<bool, const byte*> operator () (const byte* buffer, const byte* const buffer_size);
 
 				void reset()
 				{
@@ -115,16 +116,17 @@ namespace asn1
 				}
 			};
 
-			template <typename _Observer, const size_t _BufferSize, typename _Tag = uint32_t, typename _Length = uint32_t>
-			bool engine<_Observer, _BufferSize, _Tag, _Length>::read(const byte*& buffer, size_t& buffer_size)
+			template <typename _Observer, const size_t _BufferSize, typename _Length>
+			std::pair<bool, const byte*> engine<_Observer, _BufferSize, _Length>::read(const byte* buffer, const byte* const buffer_end)
 			{
-				bool can_continue = true;
-				auto next = decoder_(buffer, buffer + buffer_size);
+				std::pair<bool, const byte*> result = std::make_pair(true, nullptr); 
+				auto next = decoder_(buffer, buffer_end);
 				if (decoder_.state() == state_t::done)
 				{
 					const auto length = decoder_.length().value();
-					auto consumed = length + decoder_.tag().length() + decoder_.length().length2();
-					if (consumed <= buffer_size)
+					const auto header_length = decoder_.tag().bytes() + decoder_.length().bytes();
+					auto span = header_length + length;
+					if (span <= std::distance(buffer, buffer_end))
 					{
 						const bool constructed = decoder_.tag().content_type() == content_t::constructed;
 						if (observer_ != nullptr)
@@ -132,28 +134,27 @@ namespace asn1
 							observer_->on_data(decoder_.tag().value(), constructed, decoder_.value().buffer(), length);
 						}
 
-						buffer = constructed ? next - length : next;
-						buffer_size -= consumed;
+						result.second = constructed ? next - length : next;
 					}
 					else
 					{
 						constexpr auto error = error_t::wrong_field_size;
 						internal_data_.set_error(error);
-						can_continue = false;
+						result.first = false;
 						if (observer_ != nullptr)
 						{
-							observer_->on_error(meta_id, static_cast<byte>(error), buffer, buffer_size);
+							observer_->on_error(meta_id, static_cast<byte>(error), buffer, buffer_end);
 						}
 					}
 				}
 
-				return can_continue;
+				return result;
 			}
 
-			template <typename _Observer, const size_t _BufferSize, typename _Tag = uint32_t, typename _Length = uint32_t>
-			bool engine<_Observer, _BufferSize, _Tag, _Length>::operator () (const byte*& buffer, size_t& buffer_size)
+			template <typename _Observer, const size_t _BufferSize, typename _Length>
+			std::pair<bool, const byte*> engine<_Observer, _BufferSize, _Length>::operator () (const byte* buffer, const byte* const buffer_end)
 			{
-				bool can_continue;
+				std::pair<bool, const byte*> result;
 				switch (decoder_.state())
 				{
 					case state_t::done:
@@ -163,26 +164,26 @@ namespace asn1
 					case state_t::stopped:
 					case state_t::reading:
 					{
-						can_continue = read(buffer, buffer_size);
+						result = read(buffer, buffer_end);
 						break;
 					}
 					case state_t::error:
 					{
-						can_continue = false;
+						result.first = false;
 						if (observer_ != nullptr)
 						{
-							observer_->on_error(decoder_.current_decoder(), static_cast<byte>(internal_data_.error()), buffer, buffer_size);
+							observer_->on_error(decoder_.current_decoder(), static_cast<byte>(internal_data_.error()), buffer, buffer_end);
 						}
 
 						break;
 					}
 					default:
 					{
-						can_continue = false;
+						result.first = false;
 					}
 				}
 
-				return can_continue;
+				return result;
 			}
 		}
 	}

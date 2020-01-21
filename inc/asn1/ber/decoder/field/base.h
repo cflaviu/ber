@@ -10,6 +10,13 @@ namespace asn1
 	{
 		namespace decoder
 		{
+			enum class error_t : byte
+			{
+				none,
+				wrong_field_size,
+				field_too_big
+			};
+
 			namespace field
 			{
 				enum class state_t : byte
@@ -18,13 +25,6 @@ namespace asn1
 					reading,
 					done,
 					error
-				};
-
-				enum class error_t : byte
-				{
-					none,
-					wrong_field_size,
-					field_too_big
 				};
 
 				inline bool is_good(const state_t item) { return item != state_t::error; }
@@ -58,9 +58,9 @@ namespace asn1
 						const byte* result;
 						switch (state_)
 						{
-						case state_t::stopped: result = first_read(ptr, end); break;
-						case state_t::reading: result = read(ptr, end); break;
-						default: result = nullptr;
+							case state_t::stopped: result = first_read(ptr, end); break;
+							case state_t::reading: result = read(ptr, end); break;
+							default: result = nullptr;
 						}
 
 						return result;

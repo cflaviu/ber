@@ -20,13 +20,13 @@ namespace asn1
 				meta_id
 			};
 
-			template <typename _Tag = uint32_t, typename _Length = uint32_t>
+			template <typename _Length = uint16_t>
 			class basic
 			{
 			public:
-				using tag_type = _Tag;
+				using tag_type = byte;
 				using length_type = _Length;
-				using tag_decoder = field::tag<tag_type>;
+				using tag_decoder = field::tag;
 				using length_decoder = field::length<length_type>;
 				using value_decoder = field::value<length_type>;
 
@@ -44,11 +44,10 @@ namespace asn1
 
 			public:
 				using state_t = field::state_t;
-				using error_t = field::error_t;
 
-				basic(byte* const buffer, const length_type buffer_size) :
-					value_reader_(buffer, buffer_size),
-					decoder_id_(tag_id)
+				basic(byte* const buffer, byte* const buffer_end) :
+					value_reader_(buffer, buffer_end),
+					decoder_id_(decoder::tag_id)
 				{}
 
 				id current_decoder() const { return decoder_id_; }
@@ -75,8 +74,8 @@ namespace asn1
 			};
 
 
-			template <typename _Tag = uint32_t, typename _Length = uint32_t>
-			const byte* basic<_Tag, _Length>::operator () (const byte* buffer, const byte* const buffer_end)
+			template <typename _Length>
+			const byte* basic<_Length>::operator () (const byte* buffer, const byte* const buffer_end)
 			{
 				while (buffer < buffer_end)
 				{

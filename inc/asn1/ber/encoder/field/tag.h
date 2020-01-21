@@ -11,13 +11,31 @@ namespace asn1
 		{
 			namespace field
 			{
-				template <typename T = uint32_t>
-				class tag : public base<T>
+				enum constants : byte
+				{
+					constructed_bit = 0x20,
+				};
+
+				class tag : public base<byte>
 				{
 				public:
-					using base_t = base<T>;
+					using base_t = base<byte>;
 
-					tag(const T value) : base_t(value) {}
+					tag(const byte value) : 
+						base_t(value, sizeof(byte))
+					{}
+
+					virtual byte* serialize_to(byte* buffer) const
+					{
+						if (buffer != nullptr)
+						{
+							auto val = base_t::value_;
+							std::memcpy(buffer, static_cast<const byte*>(&val), sizeof(val));
+							buffer += sizeof(val);
+						}
+
+						return buffer;
+					}
 				};
 			}
 		}

@@ -11,7 +11,7 @@ namespace asn1
 		{
 			namespace field
 			{
-				template <typename T = int32_t>
+				template <typename T = uint16_t>
 				class length : public simple<T>
 				{
 				protected:

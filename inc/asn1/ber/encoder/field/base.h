@@ -12,18 +12,26 @@ namespace asn1
 		{
 			namespace field
 			{
-				template <typename T = int32_t>
+				template <typename T>
 				class base
 				{
 				public:
-					base(const T value) : value_(value) {}
+					base(const T value, const byte length) : 
+						value_(value),
+						length_(length)
+					{}
+
 					virtual ~base() = default;
 
 					T value() const { return value_; }
-					void set_value(const T item) { value_ = item; }
+
+					byte bytes() const { return length_; }
+
+					virtual byte* serialize_to(byte* buffer) const = 0;
 
 				protected:
 					T value_;
+					byte length_;
 				};
 			}
 		}
