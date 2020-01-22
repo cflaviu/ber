@@ -23,27 +23,27 @@ namespace asn1
 			};
 			*/
 
-			template <typename _Observer, const size_t _BufferSize, typename _Length = uint16_t>
+			template <typename _Observer, typename _Length = uint16_t>
 			class engine
 			{
 			public:
 				using tag_type = byte;
 				using length_type = _Length;
-				using _Buffer = std::array<byte, _BufferSize>;
-				using _Engine = basic<_Length>;
-				using state_t = typename _Engine::state_t;
+				using state_t = typename basic<_Length>::state_t;
 
 			protected:
+				using _Decoder = basic<_Length>;
+
 				class internal_data
 				{
-					const _Engine& decoder_;
+					const _Decoder& decoder_;
 					state_t	state_;
 					error_t	error_;
 					state_t* state_ptr_;
 					error_t* error_ptr_;
 
 				public:
-					internal_data(const _Engine& decoder) :
+					internal_data(const _Decoder& decoder) :
 						decoder_(decoder),
 						state_(state_t::stopped),
 						error_(error_t::none),
@@ -87,14 +87,13 @@ namespace asn1
 
 				std::pair<bool, const byte*> read(const byte* buffer, const byte* const buffer_end);
 
-				_Buffer buffer_;
-				_Engine decoder_;
+				_Decoder decoder_;
 				internal_data internal_data_;
 				_Observer* observer_;
 
 			public:
-				engine(_Observer* const observer = nullptr) :
-					decoder_(buffer_.data(), buffer_.data() + buffer_.size()),
+				engine(byte* decoding_buffer, const length_type decoding_buffer_size, _Observer* const observer = nullptr) :
+					decoder_(decoding_buffer, decoding_buffer + decoding_buffer_size),
 					observer_(observer),
 					internal_data_(decoder_)
 				{}
@@ -116,8 +115,8 @@ namespace asn1
 				}
 			};
 
-			template <typename _Observer, const size_t _BufferSize, typename _Length>
-			std::pair<bool, const byte*> engine<_Observer, _BufferSize, _Length>::read(const byte* buffer, const byte* const buffer_end)
+			template <typename _Observer, typename _Length>
+			std::pair<bool, const byte*> engine<_Observer, _Length>::read(const byte* buffer, const byte* const buffer_end)
 			{
 				std::pair<bool, const byte*> result = std::make_pair(true, buffer_end); 
 				auto next = decoder_(buffer, buffer_end);
@@ -151,8 +150,8 @@ namespace asn1
 				return result;
 			}
 
-			template <typename _Observer, const size_t _BufferSize, typename _Length>
-			std::pair<bool, const byte*> engine<_Observer, _BufferSize, _Length>::operator () (const byte* buffer, const byte* const buffer_end)
+			template <typename _Observer, typename _Length>
+			std::pair<bool, const byte*> engine<_Observer, _Length>::operator () (const byte* buffer, const byte* const buffer_end)
 			{
 				std::pair<bool, const byte*> result;
 				switch (decoder_.state())

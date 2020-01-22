@@ -9,12 +9,13 @@ namespace asn1
 	{
 		namespace decoder
 		{
-			template <typename _Length = uint16_t>
+			template <const size_t _BufferSize = 128, typename _Length = uint16_t>
 			class printer
 			{
 			protected:
-				using _Engine = engine<printer, 128, _Length>;
+				using _Engine = engine<printer, _Length>;
 				using tag_type = byte;
+				std::array<byte, _BufferSize> buffer_;
 				_Engine decoder_;
 				std::string padding_;
 
@@ -38,7 +39,7 @@ namespace asn1
 				friend _Engine;
 			public:
 				printer():
-					decoder_(this)
+					decoder_(buffer_.data(), _BufferSize, this)
 				{}
 
 				void reset()
