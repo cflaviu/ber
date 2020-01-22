@@ -6,7 +6,7 @@ namespace asn1
 
 	namespace ber
 	{
-		enum /*class*/ tag_t: byte
+		enum class tag_t: byte
 		{
 			end_of_content,
 			boolean,
@@ -58,20 +58,23 @@ namespace asn1
 			COUNT
 		};
 
-		const char* text_of(const tag_t item);
-		const char* text_of(const class_t item);
-		const char* text_of(const content_t item);
+		#ifdef BER_TAG_PRINT
+			const char* text_of(const tag_t item);
+			const char* text_of(const class_t item);
+			const char* text_of(const content_t item);
+		#endif
 
+		// adapted from stackoverflow
 		template <typename T>
 		byte bytes_needed(const T value)
 		{
-			byte c = 0; // 0 => size 1
-			c |= (!!(value & 0xFF00)); // 1 => size 2
-			c |= (!!(value & 0xFF0000)) << 1; // 2 => size 3
-			c |= (!!(value & 0xFF000000)) << 2; // 4 => size 4
+			byte index = 0; // 0 => size 1
+			index |= (!!(value & 0xFF00)); // 1 => size 2
+			index |= (!!(value & 0xFF0000)) << 1; // 2 => size 3
+			index |= (!!(value & 0xFF000000)) << 2; // 4 => size 4
 
 			static const byte sizes[] = { 1, 2, 3, 3, 4, 4, 4, 4 };
-			return sizes[c];
+			return sizes[index];
 		}
 	}
 }
