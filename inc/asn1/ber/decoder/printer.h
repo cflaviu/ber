@@ -19,21 +19,21 @@ namespace asn1
 				_Engine decoder_;
 				std::string padding_;
 
-				void on_data(const tag_type tag, const bool constructed, const byte* data, const size_t size)
+				void on_data(const tag_type tag, const bool constructed, const byte* data, const _Length data_size)
 				{
-					std::cout << padding_ << text_of(tag_t(tag)) << ' ' << '[' << std::dec << size << "]: ";
-					print(data, size);
+					std::cout << padding_ << text_of(tag_t(tag)) << ' ' << '[' << std::dec << data_size << "]: ";
+					print(data, data_size);
 					std::cout << '\n';
 					if (constructed)
 					{
-						padding_ += ' ';
+						padding_ += "  ";
 					}
 				}
 
-				void on_error(const byte decoder_id, const byte error, const byte* buffer, const  byte* const buffer_size)
+				void on_error(const byte decoder_id, const byte error, const byte* buffer, const  _Length buffer_size)
 				{
 					std::cout << "decoder " << int(decoder_id) << ": error " << int(error) << "\n   buffer: ";
-					print(buffer, static_cast<size_t>(std::distance(buffer, buffer_size)));
+					print(buffer, buffer_size);
 				}
 
 				friend _Engine;

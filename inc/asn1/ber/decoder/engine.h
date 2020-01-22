@@ -18,7 +18,7 @@ namespace asn1
 			/*
 			struct observer_example
 			{
-				void on_data(const uint32_t tag, const bool constructed, const byte* data, const uint32_t size);
+				void on_data(const byte tag, const bool constructed, const byte* data, const uint32_t data_size);
 				void on_error(const decoder_id item, const byte* buffer, const uint32_t buffer_size);
 			};
 			*/
@@ -142,7 +142,7 @@ namespace asn1
 						result.first = false;
 						if (observer_ != nullptr)
 						{
-							observer_->on_error(meta_id, static_cast<byte>(error), buffer, buffer_end);
+							observer_->on_error(meta_id, static_cast<byte>(error), buffer, static_cast<_Length>(buffer_end - buffer));
 						}
 					}
 				}
@@ -171,7 +171,7 @@ namespace asn1
 						result.first = false;
 						if (observer_ != nullptr)
 						{
-							observer_->on_error(decoder_.current_decoder(), static_cast<byte>(internal_data_.error()), buffer, buffer_end);
+							observer_->on_error(decoder_.current_decoder(), static_cast<byte>(internal_data_.error()), buffer, static_cast<_Length>(buffer_end - buffer));
 						}
 
 						break;
