@@ -11,8 +11,6 @@ namespace asn1
 {
 	namespace ber
 	{
-		typedef uint32_t size_t;
-
 		namespace decoder
 		{
 			/*

@@ -30,7 +30,7 @@ namespace asn1
 					}
 				}
 
-				void on_error(const byte decoder_id, const byte error, const byte* buffer, const  _Length buffer_size)
+				void on_error(const byte decoder_id, const byte error, const byte* buffer, const _Length buffer_size)
 				{
 					std::cout << "decoder " << int(decoder_id) << ": error " << int(error) << "\n   buffer: ";
 					print(buffer, buffer_size);
