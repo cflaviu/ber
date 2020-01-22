@@ -58,11 +58,9 @@ namespace asn1
 			COUNT
 		};
 
-		#ifdef BER_TAG_PRINT
-			const char* text_of(const tag_t item);
-			const char* text_of(const class_t item);
-			const char* text_of(const content_t item);
-		#endif
+		const char* text_of(const tag_t item);
+		const char* text_of(const class_t item);
+		const char* text_of(const content_t item);
 
 		// adapted from stackoverflow
 		template <typename T>

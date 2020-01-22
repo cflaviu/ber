@@ -23,6 +23,7 @@ namespace asn1
 			public:
 				using tag_type = byte;
 				using length_type = _Length;
+				using error_length_pair = std::pair<error_t, _Length>;
 
 				tag_type tag() const
 				{
@@ -43,9 +44,9 @@ namespace asn1
 					return result;
 				}
 
-				std::pair<error_t, _Length> encode_to(byte* buffer, byte* const buffer_end) const
+				error_length_pair encode_to(byte* buffer, byte* const buffer_end) const
 				{
-					std::pair<error_t, _Length> result;
+					error_length_pair result;
 					if (total_length() <= std::distance(buffer, buffer_end))
 					{
 						buffer = tag_.serialize_to(buffer);
@@ -68,7 +69,7 @@ namespace asn1
 				template <typename _Length>
 				friend class structure;
 
-				virtual std::pair<error_t, _Length> internal_encode(byte* buffer, byte* const buffer_end) const = 0;
+				virtual error_length_pair internal_encode(byte* buffer, byte* const buffer_end) const = 0;
 
 				base(const tag_type tag = 0, const length_type length = 0) :
 					tag_(tag),

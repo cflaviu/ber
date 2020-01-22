@@ -47,7 +47,7 @@ namespace asn1
 				}
 
 			protected:
-				virtual std::pair<error_t, _Length> internal_encode(byte* buffer, byte* const /*buffer_end*/) const
+				virtual error_length_pair internal_encode(byte* buffer, byte* const /*buffer_end*/) const
 				{
 					std::memcpy(buffer, buffer_, base_t::length_.value());
 					return std::make_pair(error_t::none, base_t::length_.value());
