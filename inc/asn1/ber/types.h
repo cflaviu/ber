@@ -6,7 +6,7 @@ namespace asn1
 
 	namespace ber
 	{
-		enum class tag_t: byte
+		enum /*class*/ tag_t: byte
 		{
 			end_of_content,
 			boolean,

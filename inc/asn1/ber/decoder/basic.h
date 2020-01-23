@@ -83,40 +83,40 @@ namespace asn1
 					buffer = (*reader)(buffer, buffer_end);
 					switch (reader->state())
 					{
-					case state_t::done:
-					{
-						if (buffer < buffer_end)
+						case state_t::done:
 						{
-							switch (decoder_id_)
+							if (buffer < buffer_end)
 							{
-							case length_id:
-							{
-								if (!value_reader_.reset(length_reader_.value()))
+								switch (decoder_id_)
 								{
-									decoder_id_ = id::value_id;
-									return nullptr;
+									case length_id:
+									{
+										if (!value_reader_.reset(length_reader_.value()))
+										{
+											decoder_id_ = id::value_id;
+											return nullptr;
+										}
+									}
+									case tag_id:
+									{
+										decoder_id_ = id(byte(decoder_id_) + 1);
+										break;
+									}
+									case value_id:
+									default:;
+									{
+										return buffer;
+									}
 								}
 							}
-							case tag_id:
-							{
-								decoder_id_ = id(byte(decoder_id_) + 1);
-								break;
-							}
-							case value_id:
-							default:;
-							{
-								return buffer;
-							}
-							}
-						}
 
-						break;
-					}
-					case state_t::error:
-					{
-						return nullptr;
-					}
-					default:;
+							break;
+						}
+						case state_t::error:
+						{
+							return nullptr;
+						}
+						default:;
 					}
 				}
 

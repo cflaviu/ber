@@ -19,12 +19,12 @@ namespace asn1
 				_Engine decoder_;
 				std::string padding_;
 
-				void on_data(const tag_type tag, const bool constructed, const byte* data, const _Length data_size)
+				void on_data(const field::tag& tag, const byte* data, const _Length data_size)
 				{
-					std::cout << padding_ << text_of(tag_t(tag)) << ' ' << '[' << std::dec << data_size << "]: ";
+					std::cout << padding_ << text_of(tag_t(tag.value())) << ' ' << '[' << std::dec << data_size << "]: ";
 					print(data, data_size);
 					std::cout << '\n';
-					if (constructed)
+					if (tag.is_constructed())
 					{
 						padding_ += "  ";
 					}

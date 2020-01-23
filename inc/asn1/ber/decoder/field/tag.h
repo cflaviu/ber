@@ -41,14 +41,17 @@ namespace asn1
 					}
 
 				public:
-					class_t class_type() const { return class_type_; }
-					content_t content_type() const { return content_; }
-
 					tag() :
 						base(sizeof(byte)),
 						class_type_(class_t::universal),
 						content_(content_t::primitive)
 					{}
+
+					class_t class_type() const { return class_type_; }
+
+					content_t content_type() const { return content_; }
+
+					bool is_constructed() const { return (value() & constructed) != 0; }
 
 					void reset()
 					{

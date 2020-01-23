@@ -73,7 +73,7 @@ namespace asn1
 				}
 
 			protected:
-				virtual error_length_pair internal_encode(byte* buffer, byte* const buffer_end) const
+				virtual base_t::error_length_pair internal_encode(byte* buffer, byte* const buffer_end) const
 				{
 					byte* buf = buffer;
 					error_t encoding_error;

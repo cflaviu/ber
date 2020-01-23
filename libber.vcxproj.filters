@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="src\asn1\ber\types.cpp" />
     <ClCompile Include="src\asn1\ber\pch.cpp" />
-    <ClCompile Include="tst\decoding\decoder_test.cpp" />
     <ClCompile Include="tst\encoding\encoder_test.cpp" />
   </ItemGroup>
   <ItemGroup>

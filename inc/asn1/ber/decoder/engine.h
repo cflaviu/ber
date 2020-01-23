@@ -16,7 +16,7 @@ namespace asn1
 			/*
 			struct observer_example
 			{
-				void on_data(const byte tag, const bool constructed, const byte* data, const uint32_t data_size);
+				void on_data(const field::tag& tag, const byte* data, const uint32_t data_size);
 				void on_error(const decoder_id item, const byte* buffer, const uint32_t buffer_size);
 			};
 			*/
@@ -120,18 +120,20 @@ namespace asn1
 				auto next = decoder_(buffer, buffer_end);
 				if (decoder_.state() == state_t::done)
 				{
-					const auto length = decoder_.length().value();
-					const auto header_length = decoder_.tag().bytes() + decoder_.length().bytes();
+					auto& length_item = decoder_.length();
+					auto& tag_item = decoder_.tag();
+
+					const auto length = length_item.value();
+					const auto header_length = tag_item.bytes() + length_item.bytes();
 					auto span = header_length + length;
 					if (span <= std::distance(buffer, buffer_end))
 					{
-						const bool constructed = decoder_.tag().content_type() == content_t::constructed;
 						if (observer_ != nullptr)
 						{
-							observer_->on_data(decoder_.tag().value(), constructed, decoder_.value().buffer(), length);
+							observer_->on_data(tag_item, decoder_.value().buffer(), length);
 						}
 
-						result.second = constructed ? next - length : next;
+						result.second = (tag_item.content_type() == content_t::constructed) ? next - length : next;
 					}
 					else
 					{

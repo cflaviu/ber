@@ -6,3 +6,5 @@
 /bin/x64/Debug
 /tmp/x64/Debug
 *.user
+/.vs/libber/v15
+/x64/Debug
