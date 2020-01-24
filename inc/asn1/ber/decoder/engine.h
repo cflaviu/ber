@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef PCH
 	#include <asn1/ber/decoder/field/base.h>
 	#include <asn1/ber/decoder/field/tag.h>
@@ -41,7 +41,7 @@ namespace asn1
 					error_t* error_ptr_;
 
 				public:
-					internal_data(const _Decoder& decoder) :
+                    internal_data(const _Decoder& decoder) noexcept :
 						decoder_(decoder),
 						state_(state_t::stopped),
 						error_(error_t::none),
@@ -49,19 +49,19 @@ namespace asn1
 						error_ptr_(nullptr)
 					{}
 
-					state_t state() const
+                    state_t state() const noexcept
 					{
 						return (state_ptr_ == nullptr) ? decoder_.state() : *state_ptr_;
 					}
 
-					error_t error() const
+                    error_t error() const noexcept
 					{
 						return (error_ptr_ == nullptr) ? decoder_.error() : *error_ptr_;
 					}
 
-					bool good() const { return field::is_good(state()); }
+                    bool good() const noexcept{ return field::is_good(state()); }
 
-					void set_error(const error_t item)
+                    void set_error(const error_t item) noexcept
 					{
 						if (state_ptr_ == nullptr)
 						{
@@ -73,7 +73,7 @@ namespace asn1
 						error_ = item;
 					}
 
-					void reset()
+                    void reset() noexcept
 					{
 						if (state_ptr_ != nullptr)
 						{
@@ -90,23 +90,23 @@ namespace asn1
 				_Observer* observer_;
 
 			public:
-				engine(byte* decoding_buffer, const length_type decoding_buffer_size, _Observer* const observer = nullptr) :
+                engine(byte* decoding_buffer, const length_type decoding_buffer_size, _Observer* const observer = nullptr) noexcept:
 					decoder_(decoding_buffer, decoding_buffer + decoding_buffer_size),
 					observer_(observer),
 					internal_data_(decoder_)
 				{}
 
-				state_t state() const { return internal_data_.state(); }
+                state_t state() const noexcept { return internal_data_.state(); }
 
-				bool good() const { return internal_data_.good(); }
+                bool good() const noexcept { return internal_data_.good(); }
 
-				_Observer* observer() const { return observer_; }
+                _Observer* observer() const noexcept { return observer_; }
 
-				void set_observer(_Observer* const item) { observer_ = item; }
+                void set_observer(_Observer* const item) noexcept { observer_ = item; }
 
-				std::pair<bool, const byte*> operator () (const byte* buffer, const byte* const buffer_size);
+                std::pair<bool, const byte*> operator () (const byte* buffer, const byte* const buffer_size) noexcept;
 
-				void reset()
+                void reset() noexcept
 				{
 					decoder_.reset();
 					internal_data_.reset();
@@ -114,7 +114,7 @@ namespace asn1
 			};
 
 			template <typename _Observer, typename _Length>
-			std::pair<bool, const byte*> engine<_Observer, _Length>::read(const byte* buffer, const byte* const buffer_end)
+            std::pair<bool, const byte*> engine<_Observer, _Length>::read(const byte* buffer, const byte* const buffer_end) noexcept
 			{
 				std::pair<bool, const byte*> result = std::make_pair(true, buffer_end); 
 				auto next = decoder_(buffer, buffer_end);
@@ -151,7 +151,7 @@ namespace asn1
 			}
 
 			template <typename _Observer, typename _Length>
-			std::pair<bool, const byte*> engine<_Observer, _Length>::operator () (const byte* buffer, const byte* const buffer_end)
+            std::pair<bool, const byte*> engine<_Observer, _Length>::operator () (const byte* buffer, const byte* const buffer_end) noexcept
 			{
 				std::pair<bool, const byte*> result;
 				switch (decoder_.state())

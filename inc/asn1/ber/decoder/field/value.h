@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef PCH
 #include <asn1/ber/decoder/field/base.h>
 #endif
@@ -23,13 +23,13 @@ namespace asn1
 					length_type length_;
 					length_type remaining_;
 
-					const byte* first_read(const byte* ptr, const byte* const end)
+                    const byte* first_read(const byte* ptr, const byte* const end) noexcept
 					{
 						state_ = state_t::reading;
 						return read(ptr, end);
 					}
 
-					const byte* read(const byte* ptr, const byte* const end)
+                    const byte* read(const byte* ptr, const byte* const end) noexcept
 					{
 						const auto min_size = std::min(remaining_, static_cast<length_type>(std::distance(ptr, end)));
 						std::memcpy(buffer_, ptr, min_size);
@@ -44,19 +44,19 @@ namespace asn1
 					}
 
 				public:
-					value(byte* const buffer = nullptr, byte* const buffer_end = nullptr, const length_type length = 0) :
+                    value(byte* const buffer = nullptr, byte* const buffer_end = nullptr, const length_type length = 0) noexcept :
 						buffer_(buffer),
 						buffer_end_(buffer_end),
 						length_(length),
 						remaining_(length)
 					{}
 
-					length_type length() const { return length_; }
-					const byte* buffer() const { return buffer_; }
-					const byte* buffer_end() const { return buffer_end_; }
-					length_type buffer_size() const { return static_cast<length_type>(std::distance(buffer_, buffer_end_)); }
+                    length_type length() const noexcept { return length_; }
+                    const byte* buffer() const noexcept { return buffer_; }
+                    const byte* buffer_end() const noexcept { return buffer_end_; }
+                    length_type buffer_size() const noexcept { return static_cast<length_type>(std::distance(buffer_, buffer_end_)); }
 
-					bool reset(const length_type length)
+                    bool reset(const length_type length) noexcept
 					{
 						const bool good = (buffer_size() >= length);
 						if (good)
@@ -73,7 +73,7 @@ namespace asn1
 						return good;
 					}
 
-					bool reset(byte* const buffer, const byte* const buffer_end, const length_type length)
+                    bool reset(byte* const buffer, const byte* const buffer_end, const length_type length) noexcept
 					{
 						buffer_ = buffer;
 						buffer_end_ = buffer_end;

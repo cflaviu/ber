@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef PCH
 	#include <asn1/ber/decoder/field/base.h>
 	#include <asn1/ber/decoder/field/tag.h>
@@ -45,37 +45,37 @@ namespace asn1
 			public:
 				using state_t = field::state_t;
 
-				basic(byte* const buffer, byte* const buffer_end) :
+                basic(byte* const buffer, byte* const buffer_end) noexcept :
 					value_reader_(buffer, buffer_end),
 					decoder_id_(decoder::tag_id)
 				{}
 
-				id current_decoder() const { return decoder_id_; }
+                id current_decoder() const noexcept { return decoder_id_; }
 
-				const tag_decoder& tag() const { return tag_reader_; }
+                const tag_decoder& tag() const noexcept { return tag_reader_; }
 
-				const length_decoder& length() const { return length_reader_; }
+                const length_decoder& length() const noexcept { return length_reader_; }
 
-				const value_decoder& value() const { return value_reader_; }
+                const value_decoder& value() const noexcept { return value_reader_; }
 
-				void reset()
+                void reset() noexcept
 				{
 					tag_reader_.reset();
 					length_reader_.reset();
 					decoder_id_ = tag_id;
 				}
 
-				state_t state() const { return decoder()->state(); }
-				error_t error() const { return decoder()->error(); }
+                state_t state() const noexcept { return decoder()->state(); }
+                error_t error() const noexcept{ return decoder()->error(); }
 
-				bool good() const { return is_good(state()); }
+                bool good() const noexcept { return is_good(state()); }
 
-				const byte* operator () (const byte* buffer, const byte* const buffer_end);
+                const byte* operator () (const byte* buffer, const byte* const buffer_end) noexcept;
 			};
 
 
 			template <typename _Length>
-			const byte* basic<_Length>::operator () (const byte* buffer, const byte* const buffer_end)
+            const byte* basic<_Length>::operator () (const byte* buffer, const byte* const buffer_end) noexcept
 			{
 				while (buffer < buffer_end)
 				{

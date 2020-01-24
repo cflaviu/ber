@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef PCH
 	#include <asn1/ber/decoder/engine.h>
 #endif
@@ -38,16 +38,16 @@ namespace asn1
 
 				friend _Engine;
 			public:
-				printer():
+                printer() noexcept:
 					decoder_(buffer_.data(), _BufferSize, this)
 				{}
 
-				void reset()
+                void reset() noexcept
 				{
 					padding_.clear();
 				}
 
-				void operator () (const byte* buffer, const byte* const buffer_end)
+                void operator () (const byte* buffer, const byte* const buffer_end) noexcept
 				{
 					for(std::pair<bool, const byte*> result; buffer != buffer_end; ) 
 					{

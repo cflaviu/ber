@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef PCH
 	#include <asn1/ber/encoder/field/base.h>
 #endif
@@ -24,16 +24,16 @@ namespace asn1
 						mask = 0x7F,
 					};
 
-					static byte bytes_storing(const T value)
+                    static byte bytes_storing(const T value) noexcept
 					{
 						return 1 + (value < 127 ? 0 : bytes_needed(value));
 					}
 
-					length(const T value) : 
+                    length(const T value) noexcept :
 						base_t(value, bytes_storing(value))
 					{}
 
-					byte* serialize_to(byte* buffer) const
+                    byte* serialize_to(byte* buffer) const noexcept
 					{
 						if (buffer != nullptr)
 						{

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef PCH
 	#include <asn1/ber/types.h>
 	#include <cstdint>
@@ -27,7 +27,7 @@ namespace asn1
 					error
 				};
 
-				inline bool is_good(const state_t item) { return item != state_t::error; }
+                inline bool is_good(const state_t item) noexcept { return item != state_t::error; }
 
 				class base
 				{
@@ -35,25 +35,25 @@ namespace asn1
 					state_t state_;
 					error_t error_;
 
-					base() :
+                    base() noexcept :
 						state_(state_t::stopped),
 						error_(error_t::none)
 					{}
 
-					virtual const byte* first_read(const byte* ptr, const byte* const end) = 0;
-					virtual const byte* read(const byte* ptr, const byte* const end) = 0;
+                    virtual const byte* first_read(const byte* ptr, const byte* const end) noexcept = 0;
+                    virtual const byte* read(const byte* ptr, const byte* const end) noexcept = 0;
 
-					void set_error(const error_t item)
+                    void set_error(const error_t item) noexcept
 					{
 						state_ = state_t::error;
 						error_ = item;
 					}
 
 				public:
-					state_t state() const { return state_; }
-					error_t error() const { return error_; }
+                    state_t state() const noexcept { return state_; }
+                    error_t error() const noexcept { return error_; }
 
-					const byte* operator () (const byte* ptr, const byte* const end)
+                    const byte* operator () (const byte* ptr, const byte* const end) noexcept
 					{
 						const byte* result;
 						switch (state_)
@@ -66,7 +66,7 @@ namespace asn1
 						return result;
 					}
 
-					virtual void reset()
+                    virtual void reset() noexcept
 					{
 						state_ = state_t::stopped;
 						error_ = error_t::none;

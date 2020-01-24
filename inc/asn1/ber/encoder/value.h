@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef PCH
 	#include <asn1/ber/encoder/base.h>
 #endif
@@ -21,33 +21,33 @@ namespace asn1
 					buffer_(nullptr)
 				{}
 
-				value(const tag_type tag) :
+                value(const tag_type tag) noexcept :
 					base_t(tag)
 				{}
 
-				value(const tag_type tag, const byte* value, const _Length value_size):
+                value(const tag_type tag, const byte* value, const _Length value_size) noexcept:
 					base_t(tag, value_size),
 					buffer_(value)
 				{}
 
-				virtual _Length content_length() const
+                virtual _Length content_length() const noexcept
 				{
 					return base_t::length_.value();
 				}
 
-				const byte* buffer() const
+                const byte* buffer() const noexcept
 				{
 					return buffer_;
 				}
 
-				void set_buffer(const byte* value, _Length value_size)
+                void set_buffer(const byte* value, _Length value_size) noexcept
 				{
 					buffer_ = value;
 					base_t::length_ = value_size;
 				}
 
 			protected:
-				virtual base_t::error_length_pair internal_encode(byte* buffer, byte* const /*buffer_end*/) const
+                virtual base_t::error_length_pair internal_encode(byte* buffer, byte* const /*buffer_end*/) const noexcept
 				{
 					std::memcpy(buffer, buffer_, base_t::length_.value());
 					return std::make_pair(error_t::none, base_t::length_.value());

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef PCH
 	#include <asn1/ber/encoder/base.h>
 #endif
@@ -22,19 +22,19 @@ namespace asn1
 					constructed_bit = 0x20,
 				};
 
-				structure(const tag_type tag) :
+                structure(const tag_type tag) noexcept :
 					base_t(tag | constructed_bit),
 					begin_(nullptr),
 					end_(nullptr),
 					dirty_length_(true)
 				{}
 
-				void set_tag(const tag_type item)
+                void set_tag(const tag_type item) noexcept
 				{
 					base_t::tag_ = item | constructed_bit;
 				}
 
-				virtual length_type content_length() const
+                virtual length_type content_length() const noexcept
 				{
 					if (dirty_length_)
 					{
@@ -51,7 +51,7 @@ namespace asn1
 					return base_t::length_.value();
 				}
 
-				structure& operator << (base_t& item)
+                structure& operator << (base_t& item) noexcept
 				{
 					if (begin_ == nullptr)
 					{
@@ -73,7 +73,7 @@ namespace asn1
 				}
 
 			protected:
-				virtual base_t::error_length_pair internal_encode(byte* buffer, byte* const buffer_end) const
+                virtual base_t::error_length_pair internal_encode(byte* buffer, byte* const buffer_end) const noexcept
 				{
 					byte* buf = buffer;
 					error_t encoding_error;

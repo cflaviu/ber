@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 namespace asn1
 {
@@ -58,13 +58,13 @@ namespace asn1
 			COUNT
 		};
 
-		const char* text_of(const tag_t item);
-		const char* text_of(const class_t item);
-		const char* text_of(const content_t item);
+        const char* text_of(const tag_t item) noexcept;
+        const char* text_of(const class_t item) noexcept;
+        const char* text_of(const content_t item) noexcept;
 
 		// adapted from stackoverflow
 		template <typename T>
-		byte bytes_needed(const T value)
+        byte bytes_needed(const T value) noexcept
 		{
 			byte index = 0; // 0 => size 1
 			index |= (!!(value & 0xFF00)); // 1 => size 2

@@ -1,17 +1,17 @@
-#include "asn1/ber/pch.h"
+﻿#include "asn1/ber/pch.h"
 #include "asn1/ber/types.h"
 
 namespace asn1 {
 namespace ber {
 
 template <typename T>
-const char* text_of(const T item, const char* const texts[])
+const char* text_of(const T item, const char* const texts[]) noexcept
 {
 	auto index = static_cast<byte>(item);
 	return index < static_cast<byte>(T::COUNT) ? texts[index] : "<unknown>";
 }
 
-const char* text_of(const tag_t item)
+const char* text_of(const tag_t item) noexcept
 {
 	static const char* const texts[] =
 	{
@@ -51,7 +51,7 @@ const char* text_of(const tag_t item)
 	return text_of(item, texts);
 }
 
-const char* text_of(const class_t item)
+const char* text_of(const class_t item) noexcept
 {
 	static const char* const texts[] =
 	{
@@ -64,7 +64,7 @@ const char* text_of(const class_t item)
 	return text_of(item, texts);
 }
 
-const char* text_of(const content_t item)
+const char* text_of(const content_t item) noexcept
 {
 	static const char* const texts[] =
 	{

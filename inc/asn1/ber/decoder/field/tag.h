@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef PCH
 	#include <asn1/ber/decoder/field/simple.h>
 #endif
@@ -25,7 +25,7 @@ namespace asn1
 					content_t content_;
 					class_t class_type_;
 
-					const byte* first_read(const byte* ptr, const byte* const end)
+                    const byte* first_read(const byte* ptr, const byte* const end) noexcept
 					{
 						base::value_ = *ptr & mask;
 						base::state_ = state_t::done;
@@ -35,25 +35,25 @@ namespace asn1
 						return ptr + 1;
 					}
 
-					const byte* read(const byte* /*ptr*/, const byte* const /*end*/)
+                    const byte* read(const byte* /*ptr*/, const byte* const /*end*/) noexcept
 					{
 						return nullptr;
 					}
 
 				public:
-					tag() :
+                    tag() noexcept :
 						base(sizeof(byte)),
 						class_type_(class_t::universal),
 						content_(content_t::primitive)
 					{}
 
-					class_t class_type() const { return class_type_; }
+                    class_t class_type() const noexcept { return class_type_; }
 
-					content_t content_type() const { return content_; }
+                    content_t content_type() const noexcept { return content_; }
 
-					bool is_constructed() const { return (value() & constructed) != 0; }
+                    bool is_constructed() const noexcept { return (value() & constructed) != 0; }
 
-					void reset()
+                    void reset() noexcept
 					{
 						base::reset();
 						class_type_ = class_t::universal;
