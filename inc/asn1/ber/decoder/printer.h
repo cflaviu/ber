@@ -43,7 +43,7 @@ namespace asn1
 					print(buffer, buffer_size);
 				}
 
-				friend _Engine;
+                friend _Engine;
 			public:
                 printer(std::ostream& output = std::cout) noexcept:
                     decoder_(buffer_.data(), _BufferSize, this),
