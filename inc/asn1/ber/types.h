@@ -1,8 +1,12 @@
 ﻿#pragma once
+#ifndef PCH
+    #include <span>
+#endif
 
 namespace asn1
 {
 	using byte = unsigned char;
+    using byte_span = std::span<byte>;
 
 	namespace ber
 	{

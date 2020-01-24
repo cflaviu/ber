@@ -1,6 +1,7 @@
 ﻿#pragma once
 #ifndef PCH
-#include <asn1/ber/decoder/field/base.h>
+    #include <asn1/ber/decoder/field/base.h>
+    #include <cstring>
 #endif
 
 namespace asn1

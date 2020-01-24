@@ -1,10 +1,14 @@
-#include "asn1/ber/pch.h"
+﻿#include "asn1/ber/pch.h"
 #ifndef  PCH
 	#include <string>
+    #include <vector>
 #endif
 #include <asn1/ber/decoder/printer.h>
+#include "../tester.h"
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
 
-int main()
+void decoder_test()
 {
 	using namespace asn1;
 
@@ -20,7 +24,7 @@ int main()
 		{ 0x01, 0x05, 0x0e, 0x83, 0xbb, 0xce, 0x2d, 0xf9, 0x3c, 0xa0, 0xe9, 0xa3, 0x2f, 0x2c, 0xaf, 0xc0 }
 	};
 
-	ber::decoder::printer<> printer;
+    ber::decoder::printer<> printer(std::cout);
 	for( auto& i : input)
 	{
 		printer(i.data(), i.data() + i.size());

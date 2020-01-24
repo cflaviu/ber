@@ -83,7 +83,7 @@ namespace asn1
 					}
 				};
 
-				std::pair<bool, const byte*> read(const byte* buffer, const byte* const buffer_end);
+                std::pair<bool, const byte*> read(const byte* buffer, const byte* const buffer_end) noexcept;
 
 				_Decoder decoder_;
 				internal_data internal_data_;
@@ -92,8 +92,8 @@ namespace asn1
 			public:
                 engine(byte* decoding_buffer, const length_type decoding_buffer_size, _Observer* const observer = nullptr) noexcept:
 					decoder_(decoding_buffer, decoding_buffer + decoding_buffer_size),
-					observer_(observer),
-					internal_data_(decoder_)
+                    internal_data_(decoder_),
+                    observer_(observer)
 				{}
 
                 state_t state() const noexcept { return internal_data_.state(); }
@@ -159,6 +159,7 @@ namespace asn1
 					case state_t::done:
 					{
 						decoder_.reset();
+                        [[fallthrough]];
 					}
 					case state_t::stopped:
 					case state_t::reading:

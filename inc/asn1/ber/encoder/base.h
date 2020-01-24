@@ -66,7 +66,7 @@ namespace asn1
 				using tag_encoder = field::tag;
 				using length_encoder = field::length<length_type>;
 
-				template <typename _Length>
+                template <typename Length>
 				friend class structure;
 
 				virtual error_length_pair internal_encode(byte* buffer, byte* const buffer_end) const = 0;

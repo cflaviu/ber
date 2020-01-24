@@ -2,56 +2,46 @@
 
 Project {
     minimumQbsVersion: "1.7.1"
-
     property bool usePCH: false
 
     StaticLibrary {
-
         name : "ber"
         version: "0.1"
-
         Depends { name: 'cpp' }
         cpp.includePaths: ["inc"]
         cpp.cxxLanguageVersion: "c++17"
         cpp.enableExceptions: false
         cpp.enableRtti: false
-
         Group {
-            name: "decoder"
-            prefix: "inc/asn1/ber/decoder/"
+            name: "base"
+            qbs.install: true
+            qbs.installSourceBase: "inc/asn1/ber/"
+            qbs.installDir: "/usr/local/include/ber/"
+            prefix: "inc/asn1/ber/"
             files: [
-                "field/base.h",
-                "field/length.h",
-                "field/simple.h",
-                "field/tag.h",
-                "field/value.h",
-                "basic.h",
-                "engine.h",
-                "printer.h",
+                "types.h",
+                "encoder/field/base.h",
+                "encoder/field/length.h",
+                "encoder/field/tag.h",
+                "encoder/base.h",
+                "encoder/structure.h",
+                "encoder/value.h",
+                "decoder/field/base.h",
+                "decoder/field/length.h",
+                "decoder/field/simple.h",
+                "decoder/field/tag.h",
+                "decoder/field/value.h",
+                "decoder/basic.h",
+                "decoder/engine.h",
+                "decoder/printer.h",
             ]
         }
-
         Group {
-            name: "encoder"
-            prefix: "inc/asn1/ber/encoder/"
+            name: "extra"
             files: [
-                "field/base.h",
-                "field/length.h",
-                "field/tag.h",
-                "base.h",
-                "structure.h",
-                "value.h"
-            ]
-        }
-
-        Group {
-            name: "common"
-            files: [
-                "inc/asn1/ber/types.h",
                 "src/asn1/ber/types.cpp",
             ]
         }
-
         Group {
             name: "pch"
             condition: project.usePCH
@@ -62,4 +52,22 @@ Project {
             ]
         }
     }
+
+    CppApplication {
+         name : "ber_test"
+         version: "0.1"
+         Depends { name: "ber" }
+         cpp.includePaths: [
+             "inc",
+             "/usr/local/include"
+         ]
+         cpp.cxxLanguageVersion: "c++17"
+         cpp.enableExceptions: false
+         cpp.enableRtti: false
+         files: [
+            "tst/enc/encoder_test.cpp",
+            "tst/dec/decoder_test.cpp",
+            "tst/tester.h",
+        ]
+     }
 }

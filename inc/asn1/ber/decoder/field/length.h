@@ -38,8 +38,8 @@ namespace asn1
 						{
 							base::length_ = *ptr & mask;
 							if (base::length_ != 0) // definite long
-							{
-								if (base::length_ <= sizeof(base::value_type))
+                            {
+                                if (base::length_ <= static_cast<int8_t>(sizeof(typename base::value_type)))
 								{
 									base::value_ = 0;
 									ptr = read(ptr, end);

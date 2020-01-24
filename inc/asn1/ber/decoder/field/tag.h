@@ -22,10 +22,10 @@ namespace asn1
 						constructed  = 0x20,
 					};
 
+                    class_t class_type_;
 					content_t content_;
-					class_t class_type_;
 
-                    const byte* first_read(const byte* ptr, const byte* const end) noexcept
+                    const byte* first_read(const byte* ptr, const byte* const /*end*/) noexcept
 					{
 						base::value_ = *ptr & mask;
 						base::state_ = state_t::done;

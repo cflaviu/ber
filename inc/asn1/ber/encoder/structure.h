@@ -1,6 +1,7 @@
 ﻿#pragma once
 #ifndef PCH
 	#include <asn1/ber/encoder/base.h>
+    #include <tuple>
 #endif
 
 namespace asn1
@@ -14,8 +15,9 @@ namespace asn1
 			{
 			public:
 				using base_t = base<_Length>;
-				using tag_type = base_t::tag_type;
-				using length_type = base_t::length_type;
+                using tag_type = typename base_t::tag_type;
+                using length_type = typename base_t::length_type;
+                using error_length_pair = typename base_t::error_length_pair;
 
 				enum constants : byte
 				{
@@ -45,7 +47,7 @@ namespace asn1
 							len += i->total_length();
 						}
 
-						base_t::length_ = base_t::length_encoder(len);
+                        base_t::length_ = typename base_t::length_encoder(len);
 					}
 
 					return base_t::length_.value();
@@ -73,7 +75,7 @@ namespace asn1
 				}
 
 			protected:
-                virtual base_t::error_length_pair internal_encode(byte* buffer, byte* const buffer_end) const noexcept
+                virtual error_length_pair internal_encode(byte* buffer, byte* const buffer_end) const noexcept
 				{
 					byte* buf = buffer;
 					error_t encoding_error;

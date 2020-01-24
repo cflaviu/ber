@@ -1,13 +1,14 @@
-#include "asn1/ber/pch.h"
+﻿#include "asn1/ber/pch.h"
 #ifndef  PCH
 	#include <string>
 #endif
 #include <asn1/ber/encoder/structure.h>
 #include <asn1/ber/encoder/value.h>
-
 #include <asn1/ber/decoder/printer.h>
+#include "../tester.h"
+#include <catch2/catch.hpp>
 
-int main()
+void encoder_test1()
 {
 	using namespace asn1::ber;
 	using namespace asn1::ber::encoder;

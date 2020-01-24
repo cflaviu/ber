@@ -96,6 +96,8 @@ namespace asn1
 											decoder_id_ = id::value_id;
 											return nullptr;
 										}
+
+                                        [[fallthrough]];
 									}
 									case tag_id:
 									{

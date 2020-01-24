@@ -14,8 +14,9 @@ namespace asn1
 			{
 			public:
 				using base_t = base<_Length>;
-				using tag_type = base_t::tag_type;
-				using length_type = base_t::length_type;
+                using tag_type = typename base_t::tag_type;
+                using length_type = typename base_t::length_type;
+                using error_length_pair = typename base_t::error_length_pair;
 
 				value():
 					buffer_(nullptr)
@@ -47,7 +48,7 @@ namespace asn1
 				}
 
 			protected:
-                virtual base_t::error_length_pair internal_encode(byte* buffer, byte* const /*buffer_end*/) const noexcept
+                virtual error_length_pair internal_encode(byte* buffer, byte* const /*buffer_end*/) const noexcept
 				{
 					std::memcpy(buffer, buffer_, base_t::length_.value());
 					return std::make_pair(error_t::none, base_t::length_.value());
