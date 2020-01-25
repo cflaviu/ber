@@ -29,6 +29,7 @@ namespace asn1
 				using tag_decoder = field::tag;
 				using length_decoder = field::length<length_type>;
 				using value_decoder = field::value<length_type>;
+				using state_t = field::state_t;
 
 			protected:
 				tag_decoder tag_reader_;
@@ -43,8 +44,6 @@ namespace asn1
 				}
 
 			public:
-				using state_t = field::state_t;
-
                 basic(byte* const buffer, byte* const buffer_end) noexcept :
 					value_reader_(buffer, buffer_end),
 					decoder_id_(decoder::tag_id)
