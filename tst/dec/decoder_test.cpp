@@ -5,13 +5,14 @@
 #endif
 #include <asn1/ber/decoder/printer.h>
 #include "../tester.h"
-#define CATCH_CONFIG_MAIN
+//#define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
+
+namespace asn1 {
+namespace ber {
 
 void decoder_test()
 {
-	using namespace asn1;
-
 	using Buffer = std::vector<byte>;
 
 	const std::vector<Buffer> input =
@@ -24,13 +25,27 @@ void decoder_test()
 		{ 0x01, 0x05, 0x0e, 0x83, 0xbb, 0xce, 0x2d, 0xf9, 0x3c, 0xa0, 0xe9, 0xa3, 0x2f, 0x2c, 0xaf, 0xc0 }
     };
 
-    using tester = ber::decoder::tester<>;
+    using tester = decoder::tester<>;
 
-    tester::input_item_array input_items;
-    tester::expected_item_array expected_items;
-    tester::ok_array oks;
+    const tester::test_item_array input_items = 
+	{
+		{ // test1
+			{ 0x01, 0x01, 0x01 }, // input
 
-    tester t(input_items, expected_items, oks);
+			{ // expected
+				{ { tag_t::sequence }, { 0x100, 0, 0} }
+			}
+		},
+		{ // test2
+			{ 0x01, 0x01, 0x01 }, // input
+
+			{ // expected
+				{ { tag_t::sequence }, { 0x100, 0, 0} }
+			}
+		},
+	};
+
+    tester t(input_items);
 
     ber::decoder::printer<> printer(std::cout);
 	for( auto& i : input)
@@ -38,4 +53,11 @@ void decoder_test()
 		printer(i.data(), i.data() + i.size());
 		printer.reset();
 	}
+}
+
+}}
+
+int main()
+{
+	asn1::ber::decoder_test();
 }

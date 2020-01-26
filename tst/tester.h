@@ -16,61 +16,94 @@ namespace asn1
             {
             public:
                 using tag_type = byte;
-                using input_item_array = std::span<byte_span>;
-                using expected_item_array = std::span<std::pair<tag_type, byte_span>>;
+                using input_data = byte_span;
+                using expected_data = std::span<std::pair<tag_type, byte_span>>;
+                using test_item = std::pair<input_data, expected_data>;
+                using test_item_array = std::span<test_item>;
+
+                enum class error
+                {
+                    none,
+                    tag_mismatch,
+                    data_mismatch,
+                    decoding
+                };
+
                 using ok_array = std::span<bool>;
 
             protected:
                 using _Engine = engine<tester, _Length>;
+                using test_results = std::vector<error>;
+                using test_results_array = std::vector<test_results>;
 
-                const input_item_array* input_items_;
-                const expected_item_array* expected_items_;
-                ok_array ok_array_;
+                test_item_array::const_iterator current_test_;
+                test_item_array::const_iterator end_of_tests_;
+                size_t index_of_expected_item;
+                test_results_array test_results_array_;
                 std::array<byte, _BufferSize> buffer_;
                 _Engine decoder_;
-                _Length index_;
                 bool decoding_error_;
                 bool mismatch_error_;
 
                 void on_data(const field::tag& tag, const byte* data, const _Length data_size) noexcept
                 {
-                    auto& expected = (*expected_items_)[index_];
-                    auto& expected_data = expected.second;
-                    bool ok = tag_t(tag.value()) == expected.first &&
-                            std::equal(data, data + data_size, expected_data.data(), expected_data.data() + expected_data.size());
-                    if (!ok)
+                    if (current_test_ != end_of_tests_)
                     {
-                        if (!mismatch_error_)
+                        auto& expected = current_test_->second;
+                        auto& expected_data = expected.second;
+                        if (index_of_expected_item < expected_data.size())
                         {
-                            mismatch_error_ = true;
+                            error test_error;
+                            if (tag_t(tag.value()) == expected.first)
+                            {
+                                error = std::equal(data, data + data_size, expected_data.data(), expected_data.data() + expected_data.size()) ?
+                                    error::none : error::data_mismatch;
+                            }
+                            else
+                            {
+                                error = error::tag_mismatch;
+                            }
+                            
+                            auto& results = test_results_array_.back();
+                            results.push_back(error);
+
+                            if (++index_of_expected_item == expected.second.size())
+                            {
+                                ++current_test_;
+                                index_of_expected_item = 0;
+                                test_results_array_.emplace_back(test_results());
+                            }
                         }
                     }
-
-                     ok_array_[index_++] = ok;
+                    else
+                    {
+                        std::cout << "no tests!";
+                    }
                 }
 
                 void on_error(const byte decoder_id, const byte error, const byte* buffer, const _Length buffer_size) noexcept
                 {
-                    if (!decoding_error_)
-                    {
-                        decoding_error_ = true;
-                    }
+                    auto& results = test_results_array_.back();
+                    results.push_back(error::decoding);
                 }
 
             public:
-                tester(const input_item_array& input_items, const expected_item_array& expected_items, ok_array& oks) noexcept:
-                    input_items_(&input_items),
-                    expected_items_(&expected_items),
-                    ok_array_(oks),
+                tester(const test_item_array& input) noexcept:
+                    current_test_(input.cbegin()),
+                    end_of_tests_(input.cend()),
+                    index_of_expected_item(0),
                     decoder_(buffer_.data(), _BufferSize, this),
-                    index_(0),
                     decoding_error_(false),
                     mismatch_error_(false)
-                {}
+                {
+                    test_results_array_.resize(1);
+                }
 
                 bool decoding_error() const noexcept { return decoding_error_; }
 
                 bool mismatch_error() const noexcept { return mismatch_error_; }
+
+                const test_results_array& results() const noexcept { return test_results_array_; }
 
                 void operator () (const byte* buffer, const byte* const buffer_end) noexcept
                 {
