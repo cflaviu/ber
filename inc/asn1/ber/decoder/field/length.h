@@ -24,7 +24,7 @@ namespace asn1
 						mask = 0x7F,
 					};
 
-                    const byte* first_read(const byte* ptr, const byte* const end) noexcept override
+					const byte* first_read(const byte* ptr, const byte* const end) noexcept override
 					{
 						base::state_ = state_t::reading;
 						if ((*ptr & type_bit) == 0) // definite short
@@ -38,8 +38,8 @@ namespace asn1
 						{
 							base::length_ = *ptr & mask;
 							if (base::length_ != 0) // definite long
-                            {
-                                if (base::length_ <= static_cast<int8_t>(sizeof(typename base::value_type)))
+							{
+								if (base::length_ <= static_cast<int8_t>(sizeof(typename base::value_type)))
 								{
 									base::value_ = 0;
 									ptr = read(ptr, end);
@@ -61,7 +61,7 @@ namespace asn1
 						return ptr;
 					}
 
-                    const byte* read(const byte* ptr, const byte* const end) noexcept override
+					const byte* read(const byte* ptr, const byte* const end) noexcept override
 					{
 						auto len = base::length_;
 						for (; ptr != end && len != 0; ++ptr, --len)

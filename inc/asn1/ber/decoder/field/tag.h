@@ -22,10 +22,10 @@ namespace asn1
 						constructed  = 0x20,
 					};
 
-                    class_t class_type_;
+					class_t class_type_;
 					content_t content_;
 
-                    const byte* first_read(const byte* ptr, const byte* const /*end*/) noexcept
+					const byte* first_read(const byte* ptr, const byte* const /*end*/) noexcept
 					{
 						base::value_ = *ptr & mask;
 						base::state_ = state_t::done;
@@ -35,25 +35,25 @@ namespace asn1
 						return ptr + 1;
 					}
 
-                    const byte* read(const byte* /*ptr*/, const byte* const /*end*/) noexcept
+					const byte* read(const byte* /*ptr*/, const byte* const /*end*/) noexcept
 					{
 						return nullptr;
 					}
 
 				public:
-                    tag() noexcept :
+					tag() noexcept :
 						base(sizeof(byte)),
 						class_type_(class_t::universal),
 						content_(content_t::primitive)
 					{}
 
-                    class_t class_type() const noexcept { return class_type_; }
+					class_t class_type() const noexcept { return class_type_; }
 
-                    content_t content_type() const noexcept { return content_; }
+					content_t content_type() const noexcept { return content_; }
 
-                    bool is_constructed() const noexcept { return (value() & constructed) != 0; }
+					bool is_constructed() const noexcept { return (value() & constructed) != 0; }
 
-                    void reset() noexcept
+					void reset() noexcept
 					{
 						base::reset();
 						class_type_ = class_t::universal;

@@ -1,7 +1,7 @@
 ﻿#pragma once
 #ifndef PCH
 	#include <asn1/ber/encoder/field/base.h>
-    #include <cstring>
+	#include <cstring>
 #endif
 
 namespace asn1
@@ -22,11 +22,11 @@ namespace asn1
 				public:
 					using base_t = base<byte>;
 
-                    tag(const byte value) noexcept:
+					tag(const byte value) noexcept:
 						base_t(value, sizeof(byte))
 					{}
 
-                    virtual byte* serialize_to(byte* buffer) const noexcept
+					virtual byte* serialize_to(byte* buffer) const noexcept
 					{
 						if (buffer != nullptr)
 						{

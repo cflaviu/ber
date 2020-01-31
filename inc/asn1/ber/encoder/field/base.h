@@ -16,18 +16,18 @@ namespace asn1
 				class base
 				{
 				public:
-                    base(const T value, const byte length) noexcept :
+					base(const T value, const byte length) noexcept :
 						value_(value),
 						length_(length)
 					{}
 
 					virtual ~base() = default;
 
-                    T value() const noexcept{ return value_; }
+					T value() const noexcept{ return value_; }
 
-                    byte bytes() const noexcept{ return length_; }
+					byte bytes() const noexcept{ return length_; }
 
-                    virtual byte* serialize_to(byte* buffer) const noexcept = 0;
+					virtual byte* serialize_to(byte* buffer) const noexcept = 0;
 
 				protected:
 					T value_;

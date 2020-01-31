@@ -22,16 +22,16 @@ namespace asn1
 					int8_t length_;
 
 				public:
-                    simple(const int8_t length = 0) noexcept :
+					simple(const int8_t length = 0) noexcept :
 						value_(0),
 						length_(length)
 					{}
 
-                    value_type value() const noexcept { return value_; }
+					value_type value() const noexcept { return value_; }
 
-                    int8_t bytes() const noexcept { return length_; }
+					int8_t bytes() const noexcept { return length_; }
 
-                    void reset() noexcept
+					void reset() noexcept
 					{
 						base::reset();
 						value_ = 0;
