@@ -16,10 +16,10 @@ namespace asn1
             {
             public:
                 using tag_type = byte;
-                using input_data = byte_span;
-                using expected_data = std::span<std::pair<tag_type, byte_span>>;
+                using input_data = std::vector<byte>;
+                using expected_data = std::vector<std::pair<tag_type, std::vector<byte> > >;
                 using test_item = std::pair<input_data, expected_data>;
-                using test_item_array = std::span<test_item>;
+                using test_item_array = std::vector<test_item>;
 
                 enum class error
                 {
@@ -36,6 +36,8 @@ namespace asn1
                 using test_results = std::vector<error>;
                 using test_results_array = std::vector<test_results>;
 
+                friend _Engine;
+
                 test_item_array::const_iterator current_test_;
                 test_item_array::const_iterator end_of_tests_;
                 size_t index_of_expected_item;
@@ -49,25 +51,36 @@ namespace asn1
                 {
                     if (current_test_ != end_of_tests_)
                     {
-                        auto& expected = current_test_->second;
-                        auto& expected_data = expected.second;
-                        if (index_of_expected_item < expected_data.size())
+                        const input_data& input = current_test_->first;
+                        const expected_data& output = current_test_->second;
+                        if (index_of_expected_item < output.size())
                         {
+                            auto& expected_pair = output[index_of_expected_item];
+                            auto& expected_data = expected_pair.second;
+                            const auto expected_tag = static_cast<tag_t>(expected_pair.first);
+                            const auto input_tag = static_cast<tag_t>(tag.value());
                             error test_error;
-                            if (tag_t(tag.value()) == expected.first)
+                            if (input_tag == expected_tag)
                             {
-                                error = std::equal(data, data + data_size, expected_data.data(), expected_data.data() + expected_data.size()) ?
+                                std::cout << (int)input_tag << '\n';
+                                print(std::cout, data, data_size) << '\n';
+                                print(std::cout, expected_data.data(), expected_data.size()) << '\n' << '\n';
+
+                                test_error = (data_size == expected_data.size()) &&
+                                    std::equal(data, data + data_size, expected_data.data(), expected_data.data() + expected_data.size()) ?
                                     error::none : error::data_mismatch;
                             }
                             else
                             {
-                                error = error::tag_mismatch;
+                                test_error = error::tag_mismatch;
                             }
-                            
-                            auto& results = test_results_array_.back();
-                            results.push_back(error);
 
-                            if (++index_of_expected_item == expected.second.size())
+                            auto& results = test_results_array_.back();
+                            results.push_back(test_error);
+
+                            std::cout << "test: " << (int)test_error << '\n';
+
+                            if (++index_of_expected_item == output.size())
                             {
                                 ++current_test_;
                                 index_of_expected_item = 0;
@@ -77,7 +90,7 @@ namespace asn1
                     }
                     else
                     {
-                        std::cout << "no tests!";
+                        std::cout << "no tests!\n";
                     }
                 }
 
@@ -85,6 +98,22 @@ namespace asn1
                 {
                     auto& results = test_results_array_.back();
                     results.push_back(error::decoding);
+                }
+
+                bool process(const byte* buffer, const byte* const buffer_end) noexcept
+                {
+                    for (std::pair<bool, const byte*> result; buffer != buffer_end; )
+                    {
+                        result = decoder_(buffer, buffer_end);
+                        if (!decoder_.good())
+                        {
+                            break;
+                        }
+
+                        buffer = result.second;
+                    }
+
+                    return buffer != buffer_end;
                 }
 
             public:
@@ -105,17 +134,14 @@ namespace asn1
 
                 const test_results_array& results() const noexcept { return test_results_array_; }
 
-                void operator () (const byte* buffer, const byte* const buffer_end) noexcept
+                void run()
                 {
-                    for(std::pair<bool, const byte*> result; buffer != buffer_end; )
+                    while(current_test_ != end_of_tests_)
                     {
-                        result = decoder_(buffer, buffer_end);
-                        if (!decoder_.good())
-                        {
-                            break;
-                        }
-
-                        buffer = result.second;
+                        std::cout << "===================\n";
+                        auto& input = current_test_->first;
+                        print(std::cout, input.data(), input.size()) << '\n';
+                        process(input.data(), input.data() + input.size());
                     }
                 }
             };

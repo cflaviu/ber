@@ -31,7 +31,7 @@ namespace asn1
 					buffer_(value)
 				{}
 
-                virtual _Length content_length() const noexcept
+                virtual _Length content_length() const noexcept override
 				{
 					return base_t::length_.value();
 				}

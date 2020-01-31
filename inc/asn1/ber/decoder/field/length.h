@@ -24,7 +24,7 @@ namespace asn1
 						mask = 0x7F,
 					};
 
-                    const byte* first_read(const byte* ptr, const byte* const end) noexcept
+                    const byte* first_read(const byte* ptr, const byte* const end) noexcept override
 					{
 						base::state_ = state_t::reading;
 						if ((*ptr & type_bit) == 0) // definite short
@@ -61,7 +61,7 @@ namespace asn1
 						return ptr;
 					}
 
-                    const byte* read(const byte* ptr, const byte* const end) noexcept
+                    const byte* read(const byte* ptr, const byte* const end) noexcept override
 					{
 						auto len = base::length_;
 						for (; ptr != end && len != 0; ++ptr, --len)

@@ -36,7 +36,7 @@ namespace asn1
 					base_t::tag_ = item | constructed_bit;
 				}
 
-                virtual length_type content_length() const noexcept
+                virtual length_type content_length() const noexcept override
 				{
 					if (dirty_length_)
 					{

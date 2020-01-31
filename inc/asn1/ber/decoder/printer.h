@@ -10,6 +10,17 @@ namespace asn1
 {
 	namespace ber
 	{
+		template <typename T>
+		T& print(T& out, const byte* buffer, const size_t buffer_size)
+		{
+			for (size_t i = 0; i != buffer_size; ++i)
+			{
+				out << std::hex << std::setfill('0') << std::setw(2) << int(buffer[i]) << ' ';
+			}
+
+			return out;
+		}
+
 		namespace decoder
 		{
 			template <const size_t _BufferSize = 128, typename _Length = uint16_t>
@@ -57,7 +68,7 @@ namespace asn1
 
                 void operator () (const byte* buffer, const byte* const buffer_end) noexcept
 				{
-					for(std::pair<bool, const byte*> result; buffer != buffer_end; ) 
+					for(std::pair<bool, const byte*> result; buffer != buffer_end; )
 					{
 						result = decoder_(buffer, buffer_end);
 						if (!decoder_.good())
@@ -71,10 +82,7 @@ namespace asn1
 
                 void print(const byte* buffer, const size_t buffer_size)
 				{
-                    for (size_t i = 0; i != buffer_size; ++i)
-					{
-                        out() << std::hex << std::setfill('0') << std::setw(2) << int(buffer[i]) << ' ';
-					}
+					ber::print(out(), buffer, buffer_size);
 				}
 			};
 		}

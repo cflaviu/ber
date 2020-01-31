@@ -24,13 +24,13 @@ namespace asn1
 					length_type length_;
 					length_type remaining_;
 
-                    const byte* first_read(const byte* ptr, const byte* const end) noexcept
+                    const byte* first_read(const byte* ptr, const byte* const end) noexcept override
 					{
 						state_ = state_t::reading;
 						return read(ptr, end);
 					}
 
-                    const byte* read(const byte* ptr, const byte* const end) noexcept
+                    const byte* read(const byte* ptr, const byte* const end) noexcept override
 					{
 						const auto min_size = std::min(remaining_, static_cast<length_type>(std::distance(ptr, end)));
 						std::memcpy(buffer_, ptr, min_size);
