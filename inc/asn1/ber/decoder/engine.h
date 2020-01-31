@@ -116,7 +116,7 @@ namespace asn1
 			template <typename _Observer, typename _Length>
 			std::pair<bool, const byte*> engine<_Observer, _Length>::read(const byte* buffer, const byte* const buffer_end) noexcept
 			{
-				std::pair<bool, const byte*> result = std::make_pair(true, buffer_end);
+				auto result = std::make_pair(true, buffer_end);
 				auto next = decoder_(buffer, buffer_end);
 				if (decoder_.state() == state_t::done)
 				{
@@ -124,16 +124,15 @@ namespace asn1
 					auto& tag_item = decoder_.tag();
 
 					const auto length = length_item.value();
-					const auto header_length = tag_item.bytes() + length_item.bytes();
-					auto span = header_length + length;
-					if (span <= std::distance(buffer, buffer_end))
+					const auto extent = tag_item.bytes() + length_item.bytes() + length;
+					const auto remaining = std::distance(buffer, buffer_end);
+					if (extent <= remaining)
 					{
+						result.second = (tag_item.content_type() == content_t::constructed) ? next - length : next;
 						if (observer_ != nullptr)
 						{
 							observer_->on_data(tag_item, decoder_.value().buffer(), length);
 						}
-
-						result.second = (tag_item.content_type() == content_t::constructed) ? next - length : next;
 					}
 					else
 					{
