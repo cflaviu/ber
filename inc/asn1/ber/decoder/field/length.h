@@ -75,7 +75,17 @@ namespace asn1
 
                         return result;
 					}
-				};
+
+                    bool operator == (const length& item) const noexcept
+                    {
+                        return value_ == item.value_;
+                    }
+
+                    bool operator != (const length& item) const noexcept
+                    {
+                        return value_ != item.value_;
+                    }
+                };
 			}
 		}
 	}

@@ -69,6 +69,16 @@ namespace asn1
 						content_ = content_t::primitive;
                         id_ = 0;
 					}
+
+                    bool operator == (const tag& item) const noexcept
+                    {
+                        return id_ == item.id_ && class_type_ == item.class_type_ && content_ == item.content_;
+                    }
+
+                    bool operator != (const tag& item) const noexcept
+                    {
+                        return !operator == (item);
+                    }
 				};
 			}
 		}

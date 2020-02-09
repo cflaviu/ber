@@ -14,7 +14,7 @@ namespace asn1
 			{
 				enum constants : byte
 				{
-					constructed_bit = 0x20,
+                    constructed_bit = 0x20
 				};
 
 				class tag : public base<byte>

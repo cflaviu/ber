@@ -43,7 +43,7 @@ namespace asn1
 					padding_.clear();
 				}
 
-                void operator () (const byte*& buffer, const byte* const buffer_end)
+                void operator () (const byte* buffer, const byte* const buffer_end)
 				{
                     auto error = error_t::none;
                     while(buffer != buffer_end)
@@ -59,6 +59,10 @@ namespace asn1
                             if (tag.is_constructed())
                             {
                                 padding_ += "  ";
+                            }
+                            else
+                            {
+                                buffer += length;
                             }
 						}
                         else

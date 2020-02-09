@@ -56,7 +56,14 @@ const my_tester::test_item_array input_items =
             { { tag_t::string_printable }, { 0x4A, 0x6F, 0x68, 0x6E, 0x20, 0x53, 0x6D, 0x69, 0x74, 0x68 } },
             { { tag_t::string_printable }, { 0x39, 0x38, 0x37, 0x20, 0x36, 0x35, 0x34, 0x33, 0x32, 0x31, 0x30 } }
         }
-    }
+    },
+    { // test6
+        // input
+        { 0x01, 0x01, 0xff },
+        { // expected
+            { { tag_t::boolean }, { 0xff } }
+        }
+    },
 };
 
 void test()
@@ -67,8 +74,11 @@ void test()
 
 }}}
 
+void encoder_test1();
+
 int main()
 {
+#if 0
     using namespace asn1::ber;
     assert(bytes_needed<uint64_t>(0xFF00000000000000) == 8);
     assert(bytes_needed<uint64_t>(0x1000000000000000) == 8);
@@ -105,5 +115,16 @@ int main()
     assert(bytes_needed<uint16_t>(0x0010) == 1);
     assert(bytes_needed<uint16_t>(0x0000) == 1);
 
+    asn1::ber::decoder::field::tag t1;
+    asn1::ber::decoder::field::tag t2;
+    t2 == t1;
+
+    asn1::ber::decoder::field::length<> l1;
+    asn1::ber::decoder::field::length<> l2;
+    l2 == l1;
+
     asn1::ber::decoder::test();
+#else
+    encoder_test1();
+#endif
 }

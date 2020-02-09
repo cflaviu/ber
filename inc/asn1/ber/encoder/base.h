@@ -50,7 +50,7 @@ namespace asn1
 					}
 					else
 					{
-						result = std::make_pair(error_t::not_enough_space, 0);
+                        result = std::make_pair(error_t::overflow, 0);
 					}
 
 					return result;

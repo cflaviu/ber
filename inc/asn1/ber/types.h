@@ -53,7 +53,7 @@ namespace asn1
 			COUNT
 		};
 
-		enum class content_t: byte
+        enum class content_t: byte
 		{
 			primitive,
 			constructed,
@@ -70,8 +70,7 @@ namespace asn1
             {
                 none,
                 underflow,
-                overflow,
-                wrong_field_size
+                overflow
             };
         }
 
@@ -80,9 +79,7 @@ namespace asn1
             enum class error_t : byte
             {
                 none,
-                wrong_field_size,
-                field_too_big,
-                not_enough_space
+                overflow
             };
         }
 

@@ -33,9 +33,9 @@ void encoder_test1()
     auto results = main_seq.encode_to(output_buffer.data(), output_buffer.data() + output_buffer.size());
     std::cout << (int)results.first << " : " << results.second << '\n';
 
-//    decoder::printer<> printer;
-//    std::cout << "encoded: ";
-//    printer.print(output_buffer.data(), results.second);
-//    std::cout << "\n\ndecoded:\n";
-//    printer(output_buffer.data(), output_buffer.data() + results.second);
+    decoder::printer<> printer;
+    std::cout << "encoded: ";
+    printer.print(output_buffer.data(), results.second);
+    std::cout << "\n\ndecoded:\n";
+    printer(output_buffer.data(), output_buffer.data() + results.second);
 }

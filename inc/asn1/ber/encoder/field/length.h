@@ -26,7 +26,7 @@ namespace asn1
 
 					static byte bytes_storing(const T value) noexcept
 					{
-						return 1 + (value < 127 ? 0 : bytes_needed(value));
+                        return value < 127 ? 1 : 1 + bytes_needed(value);
 					}
 
 					length(const T value) noexcept :

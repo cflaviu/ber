@@ -29,6 +29,16 @@ namespace asn1
 
 					virtual byte* serialize_to(byte* buffer) const noexcept = 0;
 
+                    bool operator == (const base& item) const noexcept
+                    {
+                        return value_ == item.value_;
+                    }
+
+                    bool operator != (const base& item) const noexcept
+                    {
+                        return value_ != item.value_;
+                    }
+
 				protected:
 					T value_;
 					byte length_;
