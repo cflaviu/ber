@@ -1,22 +1,24 @@
 ﻿#pragma once
 #ifndef PCH
-#include <asn1/ber/decoder/field/base.h>
+    #include <algorithm>
 #endif
 
 namespace asn1
 {
 	namespace ber
 	{
-		namespace decoder
+        namespace decoder
 		{
 			namespace field
 			{
 				template <typename T = uint16_t>
-				class length : public simple<T>
+                class length
 				{
-				protected:
-					using base = simple<T>;
+                public:
+                    using type = T;
+                    using value_type = T;
 
+                protected:
 					enum constants : byte
 					{
 						type_bit = 0x80,
@@ -24,57 +26,54 @@ namespace asn1
 						mask = 0x7F,
 					};
 
-					const byte* first_read(const byte* ptr, const byte* const end) noexcept override
-					{
-						base::state_ = state_t::reading;
-						if ((*ptr & type_bit) == 0) // definite short
-						{
-							base::length_ = 1;
-							base::value_ = *ptr & mask;
-							base::state_ = state_t::done;
-							++ptr;
-						}
-						else
-						{
-							base::length_ = *ptr & mask;
-							if (base::length_ != 0) // definite long
-							{
-								if (base::length_ <= static_cast<int8_t>(sizeof(typename base::value_type)))
-								{
-									base::value_ = 0;
-									ptr = read(ptr, end);
-								}
-								else
-								{
-									base::set_error(error_t::field_too_big);
-								}
-							}
-							else // indefinite
-							{
-								base::length_ = -1;
-								base::value_ = 0;
-								base::state_ = state_t::done;
-								++ptr;
-							}
-						}
+                    value_type value_;
 
-						return ptr;
-					}
+                public:
+                    length() noexcept: value_(0) {}
 
-					const byte* read(const byte* ptr, const byte* const end) noexcept override
-					{
-						auto len = base::length_;
-						for (; ptr != end && len != 0; ++ptr, --len)
-						{
-							base::value_ = (base::value_ << 8) | *ptr;
-						}
+                    value_type value() const noexcept { return value_; }
 
-						if (len == 0)
-						{
-							base::state_ = state_t::done;
-						}
+                    operator value_type () const noexcept { return value_; }
 
-						return ptr;
+                    error_t operator () (const byte*& ptr, const byte* const end) noexcept
+                    {
+                        value_ = 0;
+                        error_t result = error_t::none;
+                        if (ptr != end)
+                        {
+                            auto first_byte = *ptr++;
+                            auto length = first_byte & mask;
+                            if ((length != 0) && (first_byte & type_bit) != 0) // definite long
+                            {
+                                if (length <= static_cast<byte>(sizeof(value_type)))
+                                {
+                                    if (length <= std::distance(ptr, end))
+                                    {
+                                        auto value_end = ptr + length;
+                                        std::reverse_copy(ptr, value_end, reinterpret_cast<byte*>(&value_));
+                                        ptr = value_end;
+                                    }
+                                    else
+                                    {
+                                        result = error_t::underflow;
+                                    }
+                                }
+                                else
+                                {
+                                    result = error_t::overflow;
+                                }
+                            }
+                            else // definite short or indefinite
+                            {
+                                value_ = length;
+                            }
+                        }
+                        else
+                        {
+                            result = error_t::underflow;
+                        }
+
+                        return result;
 					}
 				};
 			}

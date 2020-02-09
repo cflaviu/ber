@@ -1,21 +1,21 @@
 ﻿#pragma once
 #ifndef PCH
-	#include <asn1/ber/decoder/field/simple.h>
+    #include <asn1/ber/types.h>
 #endif
 
 namespace asn1
 {
+    using byte = unsigned char;
+
 	namespace ber
 	{
 		namespace decoder
 		{
 			namespace field
 			{
-				class tag : public simple<uint8_t>
+                class tag
 				{
 				protected:
-					using base = simple<uint8_t>;
-
 					enum constants : byte
 					{
 						mask = 0x1F,
@@ -24,40 +24,50 @@ namespace asn1
 
 					class_t class_type_;
 					content_t content_;
-
-					const byte* first_read(const byte* ptr, const byte* const /*end*/) noexcept
-					{
-						base::value_ = *ptr & mask;
-						base::state_ = state_t::done;
-
-						class_type_ = class_t(*ptr >> 6);
-						content_ = content_t((*ptr & constructed) != 0);
-						return ptr + 1;
-					}
-
-					const byte* read(const byte* /*ptr*/, const byte* const /*end*/) noexcept
-					{
-						return nullptr;
-					}
+                    byte id_;
 
 				public:
+                    using type = tag;
+
 					tag() noexcept :
-						base(sizeof(byte)),
 						class_type_(class_t::universal),
-						content_(content_t::primitive)
+                        content_(content_t::primitive),
+                        id_(0)
 					{}
 
 					class_t class_type() const noexcept { return class_type_; }
 
 					content_t content_type() const noexcept { return content_; }
 
-					bool is_constructed() const noexcept { return (value() & constructed) != 0; }
+                    bool is_primitive() const noexcept { return content_type() == content_t::primitive; }
+
+                    bool is_constructed() const noexcept { return content_type() == content_t::constructed; }
+
+                    byte id() const noexcept { return id_; }
+
+                    error_t operator () (const byte*& ptr, const byte* const end) noexcept
+                    {
+                        error_t result = error_t::none;
+                        if (ptr != end)
+                        {
+                            auto tag_byte = *ptr++;
+                            class_type_ = class_t(tag_byte >> 6);
+                            content_ = content_t((tag_byte & constructed) != 0);
+                            id_ = tag_byte & mask;
+                        }
+                        else
+                        {
+                            result = error_t::underflow;
+                        }
+
+                        return result;
+                    }
 
 					void reset() noexcept
 					{
-						base::reset();
 						class_type_ = class_t::universal;
 						content_ = content_t::primitive;
+                        id_ = 0;
 					}
 				};
 			}

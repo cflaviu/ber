@@ -1,4 +1,4 @@
-﻿import qbs
+import qbs
 
 Project {
     minimumQbsVersion: "1.7.1"
@@ -19,6 +19,8 @@ Project {
             qbs.installDir: "/usr/local/include/ber/"
             prefix: "inc/asn1/ber/"
             files: [
+                "decoder/tag_length.h",
+                "decoder/tag_length_base.h",
                 "types.h",
                 "encoder/field/base.h",
                 "encoder/field/length.h",
@@ -26,13 +28,8 @@ Project {
                 "encoder/base.h",
                 "encoder/structure.h",
                 "encoder/value.h",
-                "decoder/field/base.h",
                 "decoder/field/length.h",
-                "decoder/field/simple.h",
                 "decoder/field/tag.h",
-                "decoder/field/value.h",
-                "decoder/basic.h",
-                "decoder/engine.h",
                 "decoder/printer.h",
             ]
         }

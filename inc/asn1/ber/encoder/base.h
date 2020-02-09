@@ -11,12 +11,6 @@ namespace asn1
 	{
 		namespace encoder
 		{
-			enum class error_t: byte
-			{
-				none,
-				not_enough_space,
-			};
-
 			template <typename _Length>
 			class base
 			{

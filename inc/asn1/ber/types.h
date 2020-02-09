@@ -6,7 +6,7 @@
 namespace asn1
 {
 	using byte = unsigned char;
-	using byte_span = std::span<byte>;
+    using buffer_view = std::span<byte>;
 
 	namespace ber
 	{
@@ -65,6 +65,28 @@ namespace asn1
 		const char* text_of(const tag_t item) noexcept;
 		const char* text_of(const class_t item) noexcept;
 		const char* text_of(const content_t item) noexcept;
+
+        namespace decoder
+        {
+            enum class error_t : byte
+            {
+                none,
+                underflow,
+                overflow,
+                wrong_field_size
+            };
+        }
+
+        namespace encoder
+        {
+            enum class error_t : byte
+            {
+                none,
+                wrong_field_size,
+                field_too_big,
+                not_enough_space
+            };
+        }
 
 		// adapted from stackoverflow
 		template <typename T>
