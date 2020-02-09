@@ -1,12 +1,10 @@
 ﻿#pragma once
 #ifndef PCH
-	#include <span>
 #endif
 
 namespace asn1
 {
 	using byte = unsigned char;
-    using buffer_view = std::span<byte>;
 
 	namespace ber
 	{
@@ -88,17 +86,58 @@ namespace asn1
             };
         }
 
-		// adapted from stackoverflow
-		template <typename T>
-		byte bytes_needed(const T value) noexcept
-		{
-			byte index = 0; // 0 => size 1
-			index |= (!!(value & 0xFF00)); // 1 => size 2
-			index |= (!!(value & 0xFF0000)) << 1; // 2 => size 3
-			index |= (!!(value & 0xFF000000)) << 2; // 4 => size 4
+        namespace internal
+        {
+            template <typename T, byte storage_bytes>
+            struct bytes_needed;
 
-			static const byte sizes[] = { 1, 2, 3, 3, 4, 4, 4, 4 };
-			return sizes[index];
-		}
+            template <typename T>
+            struct bytes_needed<T, 1>
+            {
+                byte operator () (const T value) const noexcept
+                {
+                    return 1;
+                }
+            };
+
+            template <typename T>
+            struct bytes_needed<T, 2>
+            {
+                byte operator () (const T value) const noexcept
+                {
+                    return 1 + ((value & 0xFF00) != 0);
+                }
+            };
+
+            template <typename T>
+            struct bytes_needed<T, 4>
+            {
+                byte operator () (const T value) const noexcept
+                {
+                    byte index =    ((value  & 0xFF00) != 0) |
+                                    (((value & 0xFF0000) != 0) << 1) |
+                                    (((value & 0xFF000000) != 0) << 2);
+                    static const byte sizes[] = { 1, 2, 3, 3, 4, 4, 4, 4 };
+                    return sizes[index];
+                }
+            };
+
+            template <typename T>
+            struct bytes_needed<T, 8>
+            {
+                byte operator () (const T value) const noexcept
+                {
+                    bytes_needed<T, 4> bn;
+                    auto hight_part = static_cast<uint32_t>(value >> 32);
+                    return (hight_part != 0) ? 4 + bn(hight_part) : bn(static_cast<uint32_t>(value & 0xFFFFFFFF));
+                }
+            };
+        }
+
+        template <typename T>
+        byte bytes_needed(const T value) noexcept
+        {
+            return internal::bytes_needed<T, sizeof(T)>()(value);
+        }
 	}
 }

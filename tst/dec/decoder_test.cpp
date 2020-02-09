@@ -7,13 +7,14 @@
 #include "../tester.h"
 //#define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
+#include <cassert>
 
 namespace asn1 {
 namespace ber {
 
 namespace decoder {
 
-using my_tester = decoder::tester<>;
+using my_tester = decoder::tester<uint32_t>;
 
 const my_tester::test_item_array input_items =
 {
@@ -68,5 +69,41 @@ void test()
 
 int main()
 {
+    using namespace asn1::ber;
+    assert(bytes_needed<uint64_t>(0xFF00000000000000) == 8);
+    assert(bytes_needed<uint64_t>(0x1000000000000000) == 8);
+    assert(bytes_needed<uint64_t>(0x00FF000000000000) == 7);
+    assert(bytes_needed<uint64_t>(0x0010000000000000) == 7);
+    assert(bytes_needed<uint64_t>(0x0000FF0000000000) == 6);
+    assert(bytes_needed<uint64_t>(0x0000100000000000) == 6);
+    assert(bytes_needed<uint64_t>(0x000000FF00000000) == 5);
+    assert(bytes_needed<uint64_t>(0x0000001000000000) == 5);
+
+    assert(bytes_needed<uint64_t>(0x00000000FF000000) == 4);
+    assert(bytes_needed<uint64_t>(0x0000000010000000) == 4);
+    assert(bytes_needed<uint64_t>(0x0000000000FF0000) == 3);
+    assert(bytes_needed<uint64_t>(0x0000000000100000) == 3);
+    assert(bytes_needed<uint64_t>(0x000000000000FF00) == 2);
+    assert(bytes_needed<uint64_t>(0x0000000000001000) == 2);
+    assert(bytes_needed<uint64_t>(0x00000000000000FF) == 1);
+    assert(bytes_needed<uint64_t>(0x0000000000000010) == 1);
+    assert(bytes_needed<uint64_t>(0x0000000000000000) == 1);
+
+    assert(bytes_needed<uint32_t>(0xFF000000) == 4);
+    assert(bytes_needed<uint32_t>(0x10000000) == 4);
+    assert(bytes_needed<uint32_t>(0x00FF0000) == 3);
+    assert(bytes_needed<uint32_t>(0x00100000) == 3);
+    assert(bytes_needed<uint32_t>(0x0000FF00) == 2);
+    assert(bytes_needed<uint32_t>(0x00001000) == 2);
+    assert(bytes_needed<uint32_t>(0x000000FF) == 1);
+    assert(bytes_needed<uint32_t>(0x00000010) == 1);
+    assert(bytes_needed<uint32_t>(0x00000000) == 1);
+
+    assert(bytes_needed<uint16_t>(0xFF00) == 2);
+    assert(bytes_needed<uint16_t>(0x1000) == 2);
+    assert(bytes_needed<uint16_t>(0x00FF) == 1);
+    assert(bytes_needed<uint16_t>(0x0010) == 1);
+    assert(bytes_needed<uint16_t>(0x0000) == 1);
+
     asn1::ber::decoder::test();
 }

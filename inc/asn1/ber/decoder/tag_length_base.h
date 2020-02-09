@@ -9,9 +9,7 @@ namespace asn1
 	namespace ber
 	{
 		namespace decoder
-		{
-            using buffer_view = std::span<byte>;
-
+        {
             template <typename Tag_, typename Length_>
             class tag_length_base
             {
