@@ -9,7 +9,7 @@ Project {
         version: "0.1"
         Depends { name: 'cpp' }
         cpp.includePaths: ["inc"]
-        cpp.cxxLanguageVersion: "c++17"
+        cpp.cxxLanguageVersion: "c++20"
         cpp.enableExceptions: false
         cpp.enableRtti: false
         Group {
@@ -58,7 +58,7 @@ Project {
              "inc",
              "/usr/local/include"
          ]
-         cpp.cxxLanguageVersion: "c++17"
+         cpp.cxxLanguageVersion: "c++20"
          cpp.enableExceptions: false
          cpp.enableRtti: false
          files: [
